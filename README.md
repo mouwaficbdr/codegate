@@ -1,8 +1,10 @@
 # ⚡ CodeGate
 
-**CodeGate** est un outil de productivité Linux qui bloque vos applications distrayantes et vous oblige à résoudre un challenge de code pour y accéder.
+**CodeGate** est un outil de productivité Linux innovant qui bloque vos applications distrayantes et vous oblige à résoudre un challenge de code pour y accéder.
 
 > 🎯 **Objectif** : Améliorer votre discipline personnelle tout en développant vos compétences en programmation.
+
+![CodeGate Challenge UI](assets/screenshots/challenge_ui.png)
 
 ---
 
@@ -20,6 +22,8 @@
 - Niveaux de difficulté : Facile, Moyen, Difficile, Mixte
 - 200+ challenges intégrés
 - Éditeur avec coloration syntaxique
+
+![CodeGate Settings](assets/screenshots/main_settings.png)
 
 ### 🛡️ Robustesse
 - **Watchdog** : Relance automatique si CodeGate est fermé
@@ -99,7 +103,14 @@ nano ~/.config/autostart/codegate.desktop
 
 ### Premier lancement
 
-Au premier démarrage, un wizard de configuration s'affiche :
+Au premier démarrage, un wizard de configuration s'affiche pour vous guider :
+
+<p align="center">
+  <img src="assets/screenshots/onboarding_apps.png" width="32%" alt="Sélection Apps" />
+  <img src="assets/screenshots/onboarding_difficulty.png" width="32%" alt="Difficulté" />
+  <img src="assets/screenshots/onboarding_done.png" width="32%" alt="Résumé" />
+</p>
+
 1. **Bienvenue** : Présentation du concept
 2. **Sélection apps** : Choisir les apps à bloquer
 3. **Difficulté** : Niveau des challenges
