@@ -3,12 +3,48 @@ import json
 import psutil
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QTextEdit, QPushButton, QMessageBox, QDialog, 
-                               QComboBox, QListWidget, QListWidgetItem, QTabWidget, QSplitter, QTextBrowser, QFormLayout)
+                               QComboBox, QListWidget, QListWidgetItem, QTabWidget, QSplitter, 
+                               QTextBrowser, QFormLayout, QLineEdit, QInputDialog)
 from PySide6.QtCore import Qt, Signal, Slot, QRegularExpression, QThread
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont, QIcon
 
 from src.i18n_manager import I18nManager
 from src.code_runner import CodeRunner
+
+# Applications populaires par catégorie
+COMMON_APPS = {
+    "Navigateurs": [
+        ("Firefox", "firefox"),
+        ("Google Chrome", "chrome"),
+        ("Chromium", "chromium-browser"),
+        ("Brave", "brave-browser"),
+        ("Opera", "opera"),
+        ("Microsoft Edge", "microsoft-edge"),
+    ],
+    "Communication": [
+        ("Discord", "discord"),
+        ("Slack", "slack"),
+        ("Telegram", "telegram-desktop"),
+        ("Signal", "signal-desktop"),
+        ("Thunderbird", "thunderbird"),
+        ("Evolution", "evolution"),
+    ],
+    "Jeux & Divertissement": [
+        ("Steam", "steam"),
+        ("Spotify", "spotify"),
+        ("VLC", "vlc"),
+        ("Rhythmbox", "rhythmbox"),
+        ("GIMP", "gimp"),
+    ],
+    "Développement": [
+        ("VS Code", "code"),
+        ("PyCharm", "pycharm"),
+        ("IntelliJ IDEA", "idea"),
+        ("Sublime Text", "sublime_text"),
+        ("Atom", "atom"),
+        ("Eclipse", "eclipse"),
+    ],
+}
 
 # --- Syntax Highlighter (Multi-language) ---
 class CodeHighlighter(QSyntaxHighlighter):
@@ -141,13 +177,54 @@ class SettingsDialog(QDialog):
         apps_tab = QWidget()
         apps_layout = QVBoxLayout(apps_tab)
         
-        apps_layout.addWidget(QLabel("Select apps to block:"))
+        # Header avec titre et bouton d'ajout
+        header_layout = QHBoxLayout()
+        header_layout.addWidget(QLabel("Sélectionnez les applications à bloquer:"))
+        header_layout.addStretch()
         
+        add_app_btn = QPushButton("+ Ajouter une application")
+        add_app_btn.clicked.connect(self.add_custom_app)
+        header_layout.addWidget(add_app_btn)
+        apps_layout.addLayout(header_layout)
+        
+        # Barre de recherche
+        self.search_field = QLineEdit()
+        self.search_field.setPlaceholderText("🔍 Rechercher une application...")
+        self.search_field.textChanged.connect(self.filter_apps)
+        apps_layout.addWidget(self.search_field)
+        
+        # Liste des applications
         self.apps_list = QListWidget()
-        current_blocked = set(self.settings.get("blocked_apps", []))
+        apps_layout.addWidget(self.apps_list)
         
-        # Get running processes
+        # Stocker les données
+        self.current_blocked = set(self.settings.get("blocked_apps", []))
+        self.custom_apps = set(self.settings.get("custom_apps", []))  # Apps ajoutées manuellement
+        
+        # Peupler la liste
+        self.populate_apps_list()
+        
+        tabs.addTab(apps_tab, "Blocked Apps")
+
+        layout.addWidget(tabs)
+
+        # Buttons
+        buttons = QHBoxLayout()
+        ok_btn = QPushButton(self.i18n.get("ok"))
+        ok_btn.clicked.connect(self.accept)
+        cancel_btn = QPushButton(self.i18n.get("cancel"))
+        cancel_btn.clicked.connect(self.reject)
+        buttons.addWidget(ok_btn)
+        buttons.addWidget(cancel_btn)
+        layout.addLayout(buttons)
+
+    def populate_apps_list(self):
+        """Peuple la liste des applications avec catégories, processus en cours, et apps personnalisées"""
+        self.apps_list.clear()
+        
+        # Obtenir les processus en cours
         running_apps = set()
+        import psutil # Assuming psutil is available or will be imported globally
         for proc in psutil.process_iter(['name']):
             try:
                 name = proc.info['name']
@@ -156,43 +233,138 @@ class SettingsDialog(QDialog):
             except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
                 pass
         
-        all_apps = sorted(list(running_apps.union(current_blocked)))
+        # Dictionnaire pour suivre les processus déjà ajoutés
+        added_processes = set()
         
-        for app_name in all_apps:
-            item = QListWidgetItem(app_name)
-            item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-            if app_name in current_blocked:
-                item.setCheckState(Qt.Checked)
-            else:
-                item.setCheckState(Qt.Unchecked)
-            self.apps_list.addItem(item)
+        # Ajouter les applications par catégorie
+        for category, apps in COMMON_APPS.items():
+            # Header de catégorie
+            category_item = QListWidgetItem(f"📁 {category}")
+            category_item.setFlags(Qt.NoItemFlags)  # Non cliquable
+            font = category_item.font()
+            font.setBold(True)
+            category_item.setFont(font)
+            category_item.setBackground(QColor("#2a2a2a"))
+            self.apps_list.addItem(category_item)
             
-        apps_layout.addWidget(self.apps_list)
-        tabs.addTab(apps_tab, "Blocked Apps")
+            # Applications de la catégorie
+            for display_name, process_name in apps:
+                is_running = process_name in running_apps
+                is_blocked = process_name in self.current_blocked
+                
+                # Texte avec badge si en cours
+                text = f"  {display_name}"
+                if is_running:
+                    text += " 🟢"
+                
+                item = QListWidgetItem(text)
+                item.setData(Qt.UserRole, process_name)  # Stocker le nom du processus
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
+                self.apps_list.addItem(item)
+                added_processes.add(process_name)
+        
+        # Ajouter une section pour les apps personnalisées
+        if self.custom_apps:
+            custom_item = QListWidgetItem("📁 Applications personnalisées")
+            custom_item.setFlags(Qt.NoItemFlags)
+            font = custom_item.font()
+            font.setBold(True)
+            custom_item.setFont(font)
+            custom_item.setBackground(QColor("#2a2a2a"))
+            self.apps_list.addItem(custom_item)
+            
+            for process_name in sorted(self.custom_apps):
+                if process_name not in added_processes:
+                    is_running = process_name in running_apps
+                    is_blocked = process_name in self.current_blocked
+                    
+                    text = f"  {process_name} ✏️"
+                    if is_running:
+                        text += " 🟢"
+                    
+                    item = QListWidgetItem(text)
+                    item.setData(Qt.UserRole, process_name)
+                    item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                    item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
+                    self.apps_list.addItem(item)
+                    added_processes.add(process_name)
+        
+        # Ajouter les processus en cours qui ne sont pas encore listés
+        other_running = running_apps - added_processes
+        if other_running:
+            other_item = QListWidgetItem("📁 Autres processus en cours")
+            other_item.setFlags(Qt.NoItemFlags)
+            font = other_item.font()
+            font.setBold(True)
+            other_item.setFont(font)
+            other_item.setBackground(QColor("#2a2a2a"))
+            self.apps_list.addItem(other_item)
+            
+            for process_name in sorted(other_running):
+                is_blocked = process_name in self.current_blocked
+                
+                text = f"  {process_name} 🟢"
+                item = QListWidgetItem(text)
+                item.setData(Qt.UserRole, process_name)
+                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+                item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
+                self.apps_list.addItem(item)
 
-        layout.addWidget(tabs)
-
-        # Buttons
-        btn_box = QHBoxLayout()
-        save_btn = QPushButton(self.i18n.get("save"))
-        save_btn.clicked.connect(self.accept)
-        cancel_btn = QPushButton(self.i18n.get("cancel"))
-        cancel_btn.clicked.connect(self.reject)
-        btn_box.addWidget(save_btn)
-        btn_box.addWidget(cancel_btn)
-        layout.addLayout(btn_box)
-
-    def get_settings(self):
-        blocked = []
+    def filter_apps(self, search_text):
+        """Filtre la liste des applications selon le texte de recherche"""
+        search_text = search_text.lower()
+        
         for i in range(self.apps_list.count()):
             item = self.apps_list.item(i)
-            if item.checkState() == Qt.Checked:
-                blocked.append(item.text())
+            # Ne pas cacher les headers de catégories
+            if item.flags() == Qt.NoItemFlags:
+                item.setHidden(False)
+            else:
+                # Chercher dans le texte affiché et le nom du processus
+                text = item.text().lower()
+                process_name = item.data(Qt.UserRole)
+                if process_name:
+                    process_name = process_name.lower()
+                    should_show = search_text in text or search_text in process_name
+                else:
+                    should_show = search_text in text
+                item.setHidden(not should_show)
 
+    def add_custom_app(self):
+        """Dialogue pour ajouter manuellement une application"""
+        from PySide6.QtWidgets import QInputDialog # Assuming QInputDialog is available or will be imported globally
+        process_name, ok = QInputDialog.getText(
+            self,
+            "Ajouter une application",
+            "Entrez le nom du processus à bloquer:\n(ex: firefox, chrome, discord)"
+        )
+        
+        if ok and process_name:
+            process_name = process_name.strip()
+            if process_name:
+                # Ajouter aux apps personnalisées
+                self.custom_apps.add(process_name)
+                # Bloquer par défaut
+                self.current_blocked.add(process_name)
+                # Rafraîchir la liste
+                self.populate_apps_list()
+
+    def get_settings(self):
+        blocked_apps = []
+        for i in range(self.apps_list.count()):
+            item = self.apps_list.item(i)
+            # Ignorer les headers de catégories
+            if item.flags() != Qt.NoItemFlags and item.checkState() == Qt.Checked:
+                process_name = item.data(Qt.UserRole)
+                if process_name:
+                    blocked_apps.append(process_name)
+        
         return {
             "language": self.lang_combo.currentText(),
             "difficulty_mode": self.diff_combo.currentText(),
-            "blocked_apps": blocked
+            "blocked_apps": blocked_apps,
+            "custom_apps": list(self.custom_apps)  # Sauvegarder les apps personnalisées
         }
 
 # --- Worker Thread for Tests ---
