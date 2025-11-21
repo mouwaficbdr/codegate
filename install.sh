@@ -143,9 +143,22 @@ fi
 #-------------------------------------------------------------------------------
 print_info "Setting up virtual environment..."
 
+# Check if venv exists AND is valid (pip must actually work)
+VENV_VALID=false
 if [ -d "$INSTALL_DIR/venv" ]; then
-    print_warning "Virtual environment already exists, skipping creation"
-else
+    # Test if pip can actually run
+    if "$INSTALL_DIR/venv/bin/pip" --version &>/dev/null; then
+        print_warning "Virtual environment already exists and is valid, skipping creation"
+        VENV_VALID=true
+    else
+        print_warning "Virtual environment exists but appears corrupted (pip broken)"
+        print_info "Removing corrupted virtual environment..."
+        rm -rf "$INSTALL_DIR/venv"
+    fi
+fi
+
+if [ "$VENV_VALID" = false ]; then
+    print_info "Creating virtual environment..."
     python3 -m venv "$INSTALL_DIR/venv"
     print_success "Virtual environment created"
 fi
