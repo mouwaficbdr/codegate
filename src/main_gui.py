@@ -198,7 +198,7 @@ class OverlayWindow(QMainWindow):
         header.addStretch()
         
         self.lang_selector = QComboBox()
-        self.lang_selector.addItems(["python", "javascript", "php", "c"])
+        self.lang_selector.addItems(["python", "javascript", "php"])
         self.lang_selector.currentTextChanged.connect(self.on_language_changed)
         header.addWidget(self.lang_selector)
 

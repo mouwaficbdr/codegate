@@ -32,8 +32,6 @@ class CodeRunner:
             return self._run_javascript(user_code, func_name, tests)
         elif language == "php":
             return self._run_php(user_code, func_name, tests)
-        elif language == "c":
-            return self._run_c(user_code, func_name, tests, types)
         else:
             return {"success": False, "error": f"Unsupported language: {language}", "results": []}
 
@@ -262,65 +260,3 @@ echo json_encode(["success" => $allPassed, "results" => $results]);
         except Exception as e:
             return {"success": False, "error": str(e), "results": []}
 
-    def _run_c(self, user_code, func_name, tests, types):
-        if not types:
-            return {"success": False, "error": "Missing type definitions for C", "results": []}
-
-        # Construct C Driver
-        # We need to serialize inputs/outputs manually or use a simple format
-        # For simplicity in this MVP, we'll hardcode the test cases into the C main function
-        
-        c_driver = f"""
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-
-// Helpers for JSON output
-void print_json_start() {{ printf("{{\\"results\\": ["); }}
-void print_json_end(bool success) {{ printf("], \\"success\\": %s}}", success ? "true" : "false"); }}
-void print_test_result(bool first, char* input_desc, char* expected_desc, char* actual_desc, bool passed) {{
-    if (!first) printf(",");
-    printf("{{\\"input\\": \\"%s\\", \\"expected\\": \\"%s\\", \\"actual\\": \\"%s\\", \\"passed\\": %s}}", 
-           input_desc, expected_desc, actual_desc, passed ? "true" : "false");
-}}
-
-// User Code
-{user_code}
-
-int main() {{
-    bool all_passed = true;
-    print_json_start();
-    
-    // Tests
-"""
-        
-        for i, test in enumerate(tests):
-            # This is a simplified C generator. 
-            # Real-world C generation for arbitrary types is complex.
-            # We assume basic types (int, char*, int*) based on the 'types' metadata.
-            
-            args = test['input']
-            expected = test['expected']
-            
-            # Generate C code to call function and check result
-            # This part is highly dependent on the specific challenge types
-            # For MVP, we will try to support basic int/string cases
-            
-            # ... (Complex C generation logic would go here) ...
-            # For now, let's return a placeholder error if C is used, 
-            # or implement a very basic runner for "int -> int" functions
-            
-            pass # Placeholder for C logic expansion
-            
-        c_driver += """
-    print_json_end(all_passed);
-    return 0;
-}
-"""
-        # NOTE: C support is limited in this dynamic generation approach without a heavy transpiler.
-        # We will return a "Not Implemented fully" for C in this specific refactor step 
-        # unless we implement the full type mapping.
-        # Let's stick to a basic implementation that compiles but might fail complex types.
-        
-        return {"success": False, "error": "C runner dynamic generation is currently limited. Please use Python/JS/PHP for now.", "results": []}

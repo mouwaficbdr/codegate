@@ -20,11 +20,9 @@ def generate_challenges():
             "templates": {
                 "python": "def sum_array(arr):\n    # Your code here\n    pass",
                 "javascript": "function sum_array(arr) {\n    // Your code here\n}",
-                "php": "function sum_array($arr) {\n    // Your code here\n}",
-                "c": "int sum_array(int* arr, int size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function sum_array($arr) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [1, 2, 3], "expected": 6}, {"input": [], "expected": 0}, {"input": [-5, 5], "expected": 0}],
-            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+            "tests": [{"input": [1, 2, 3], "expected": 6}, {"input": [], "expected": 0}, {"input": [-5, 5], "expected": 0}]
         },
         {
             "id_base": "even_or_odd",
@@ -38,11 +36,9 @@ def generate_challenges():
             "templates": {
                 "python": "def even_or_odd(n):\n    # Your code here\n    pass",
                 "javascript": "function even_or_odd(n) {\n    // Your code here\n}",
-                "php": "function even_or_odd($n) {\n    // Your code here\n}",
-                "c": "char* even_or_odd(int n) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function even_or_odd($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 2, "expected": "Even"}, {"input": 0, "expected": "Even"}, {"input": 7, "expected": "Odd"}],
-            "types": {"c": {"args": ["int"], "return": "char*"}}
+            "tests": [{"input": 2, "expected": "Even"}, {"input": 0, "expected": "Even"}, {"input": 7, "expected": "Odd"}]
         },
         {
             "id_base": "return_negative",
@@ -56,11 +52,9 @@ def generate_challenges():
             "templates": {
                 "python": "def make_negative(n):\n    # Your code here\n    pass",
                 "javascript": "function make_negative(n) {\n    // Your code here\n}",
-                "php": "function make_negative($n) {\n    // Your code here\n}",
-                "c": "int make_negative(int n) {\n    // Your code here\n    return 0;\n}"
+                "php": "function make_negative($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 1, "expected": -1}, {"input": -5, "expected": -5}, {"input": 0, "expected": 0}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": 1, "expected": -1}, {"input": -5, "expected": -5}, {"input": 0, "expected": 0}]
         },
         {
             "id_base": "opposite_number",
@@ -74,11 +68,9 @@ def generate_challenges():
             "templates": {
                 "python": "def opposite(n):\n    # Your code here\n    pass",
                 "javascript": "function opposite(n) {\n    // Your code here\n}",
-                "php": "function opposite($n) {\n    // Your code here\n}",
-                "c": "int opposite(int n) {\n    // Your code here\n    return 0;\n}"
+                "php": "function opposite($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 1, "expected": -1}, {"input": -34, "expected": 34}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": 1, "expected": -1}, {"input": -34, "expected": 34}]
         },
         {
             "id_base": "bool_to_string",
@@ -92,11 +84,9 @@ def generate_challenges():
             "templates": {
                 "python": "def bool_to_word(b):\n    # Your code here\n    pass",
                 "javascript": "function bool_to_word(b) {\n    // Your code here\n}",
-                "php": "function bool_to_word($b) {\n    // Your code here\n}",
-                "c": "char* bool_to_word(int b) {\n    // Your code here (1=true, 0=false)\n    return \"\";\n}"
+                "php": "function bool_to_word($b) {\n    // Your code here\n}"
             },
-            "tests": [{"input": True, "expected": "true"}, {"input": False, "expected": "false"}],
-            "types": {"c": {"args": ["int"], "return": "char*"}}
+            "tests": [{"input": True, "expected": "true"}, {"input": False, "expected": "false"}]
         },
         {
             "id_base": "remove_char",
@@ -110,11 +100,9 @@ def generate_challenges():
             "templates": {
                 "python": "def remove_char(s):\n    # Your code here\n    pass",
                 "javascript": "function remove_char(s) {\n    // Your code here\n}",
-                "php": "function remove_char($s) {\n    // Your code here\n}",
-                "c": "char* remove_char(char* s) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function remove_char($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "eloquent", "expected": "loquen"}, {"input": "country", "expected": "ountr"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "eloquent", "expected": "loquen"}, {"input": "country", "expected": "ountr"}]
         },
         {
             "id_base": "repeat_str",
@@ -128,11 +116,9 @@ def generate_challenges():
             "templates": {
                 "python": "def repeat_str(n, s):\n    # Your code here\n    pass",
                 "javascript": "function repeat_str(n, s) {\n    // Your code here\n}",
-                "php": "function repeat_str($n, $s) {\n    // Your code here\n}",
-                "c": "char* repeat_str(int n, char* s) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function repeat_str($n, $s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [3, "*"], "expected": "***"}, {"input": [2, "ha"], "expected": "haha"}],
-            "types": {"c": {"args": ["int", "char*"], "return": "char*"}}
+            "tests": [{"input": [3, "*"], "expected": "***"}, {"input": [2, "ha"], "expected": "haha"}]
         },
         {
             "id_base": "no_space",
@@ -146,11 +132,9 @@ def generate_challenges():
             "templates": {
                 "python": "def no_space(s):\n    # Your code here\n    pass",
                 "javascript": "function no_space(s) {\n    // Your code here\n}",
-                "php": "function no_space($s) {\n    // Your code here\n}",
-                "c": "char* no_space(char* s) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function no_space($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "8 j 8   mBliB8g  imjB8B8  jl  B", "expected": "8j8mBliB8gimjB8B8jlB"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "8 j 8   mBliB8g  imjB8B8  jl  B", "expected": "8j8mBliB8gimjB8B8jlB"}]
         },
         {
             "id_base": "smallest_int",
@@ -164,11 +148,9 @@ def generate_challenges():
             "templates": {
                 "python": "def find_smallest_int(arr):\n    # Your code here\n    pass",
                 "javascript": "function find_smallest_int(arr) {\n    // Your code here\n}",
-                "php": "function find_smallest_int($arr) {\n    // Your code here\n}",
-                "c": "int find_smallest_int(int* arr, int size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function find_smallest_int($arr) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [34, 15, 88, 2], "expected": 2}, {"input": [34, -345, -1, 100], "expected": -345}],
-            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+            "tests": [{"input": [34, 15, 88, 2], "expected": 2}, {"input": [34, -345, -1, 100], "expected": -345}]
         },
         {
             "id_base": "count_sheep",
@@ -182,11 +164,9 @@ def generate_challenges():
             "templates": {
                 "python": "def count_sheeps(arr):\n    # Your code here\n    pass",
                 "javascript": "function count_sheeps(arr) {\n    // Your code here\n}",
-                "php": "function count_sheeps($arr) {\n    // Your code here\n}",
-                "c": "int count_sheeps(int* arr, int size) {\n    // Your code here (1=true, 0=false)\n    return 0;\n}"
+                "php": "function count_sheeps($arr) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [True, True, True, False, True], "expected": 4}],
-            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+            "tests": [{"input": [True, True, True, False, True], "expected": 4}]
         },
         {
             "id_base": "century_from_year",
@@ -200,11 +180,9 @@ def generate_challenges():
             "templates": {
                 "python": "def century(year):\n    # Your code here\n    pass",
                 "javascript": "function century(year) {\n    // Your code here\n}",
-                "php": "function century($year) {\n    // Your code here\n}",
-                "c": "int century(int year) {\n    // Your code here\n    return 0;\n}"
+                "php": "function century($year) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 1705, "expected": 18}, {"input": 1900, "expected": 19}, {"input": 1601, "expected": 17}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": 1705, "expected": 18}, {"input": 1900, "expected": 19}, {"input": 1601, "expected": 17}]
         },
         {
             "id_base": "basic_op",
@@ -218,11 +196,9 @@ def generate_challenges():
             "templates": {
                 "python": "def basic_op(op, v1, v2):\n    # Your code here\n    pass",
                 "javascript": "function basic_op(op, v1, v2) {\n    // Your code here\n}",
-                "php": "function basic_op($op, $v1, $v2) {\n    // Your code here\n}",
-                "c": "int basic_op(char op, int v1, int v2) {\n    // Your code here\n    return 0;\n}"
+                "php": "function basic_op($op, $v1, $v2) {\n    // Your code here\n}"
             },
-            "tests": [{"input": ["+", 4, 7], "expected": 11}, {"input": ["-", 15, 18], "expected": -3}],
-            "types": {"c": {"args": ["char", "int", "int"], "return": "int"}}
+            "tests": [{"input": ["+", 4, 7], "expected": 11}, {"input": ["-", 15, 18], "expected": -3}]
         },
         {
             "id_base": "is_divisible",
@@ -236,11 +212,9 @@ def generate_challenges():
             "templates": {
                 "python": "def is_divisible(n, x, y):\n    # Your code here\n    pass",
                 "javascript": "function is_divisible(n, x, y) {\n    // Your code here\n}",
-                "php": "function is_divisible($n, $x, $y) {\n    // Your code here\n}",
-                "c": "int is_divisible(int n, int x, int y) {\n    // Your code here (1=true, 0=false)\n    return 0;\n}"
+                "php": "function is_divisible($n, $x, $y) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [3, 1, 3], "expected": True}, {"input": [12, 2, 6], "expected": True}, {"input": [100, 5, 3], "expected": False}],
-            "types": {"c": {"args": ["int", "int", "int"], "return": "int"}}
+            "tests": [{"input": [3, 1, 3], "expected": True}, {"input": [12, 2, 6], "expected": True}, {"input": [100, 5, 3], "expected": False}]
         },
         {
             "id_base": "abbrev_name",
@@ -254,11 +228,9 @@ def generate_challenges():
             "templates": {
                 "python": "def abbrev_name(name):\n    # Your code here\n    pass",
                 "javascript": "function abbrev_name(name) {\n    // Your code here\n}",
-                "php": "function abbrev_name($name) {\n    // Your code here\n}",
-                "c": "char* abbrev_name(char* name) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function abbrev_name($name) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "Sam Harris", "expected": "S.H"}, {"input": "patrick feeney", "expected": "P.F"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "Sam Harris", "expected": "S.H"}, {"input": "patrick feeney", "expected": "P.F"}]
         },
         {
             "id_base": "reversed_sequence",
@@ -272,11 +244,9 @@ def generate_challenges():
             "templates": {
                 "python": "def reverse_seq(n):\n    # Your code here\n    pass",
                 "javascript": "function reverse_seq(n) {\n    // Your code here\n}",
-                "php": "function reverse_seq($n) {\n    // Your code here\n}",
-                "c": "int* reverse_seq(int n) {\n    // Your code here\n    return 0;\n}"
+                "php": "function reverse_seq($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 5, "expected": [5, 4, 3, 2, 1]}],
-            "types": {"c": {"args": ["int"], "return": "int*"}}
+            "tests": [{"input": 5, "expected": [5, 4, 3, 2, 1]}]
         },
 
         # --- MEDIUM (15 unique) ---
@@ -292,11 +262,9 @@ def generate_challenges():
             "templates": {
                 "python": "def get_count(s):\n    # Your code here\n    pass",
                 "javascript": "function get_count(s) {\n    // Your code here\n}",
-                "php": "function get_count($s) {\n    // Your code here\n}",
-                "c": "int get_count(char* s) {\n    // Your code here\n    return 0;\n}"
+                "php": "function get_count($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "abracadabra", "expected": 5}],
-            "types": {"c": {"args": ["char*"], "return": "int"}}
+            "tests": [{"input": "abracadabra", "expected": 5}]
         },
         {
             "id_base": "disemvowel",
@@ -310,11 +278,9 @@ def generate_challenges():
             "templates": {
                 "python": "def disemvowel(s):\n    # Your code here\n    pass",
                 "javascript": "function disemvowel(s) {\n    // Your code here\n}",
-                "php": "function disemvowel($s) {\n    // Your code here\n}",
-                "c": "char* disemvowel(char* s) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function disemvowel($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "This website is for losers LOL!", "expected": "Ths wbst s fr lsrs LL!"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "This website is for losers LOL!", "expected": "Ths wbst s fr lsrs LL!"}]
         },
         {
             "id_base": "square_digits",
@@ -328,11 +294,9 @@ def generate_challenges():
             "templates": {
                 "python": "def square_digits(num):\n    # Your code here\n    pass",
                 "javascript": "function square_digits(num) {\n    // Your code here\n}",
-                "php": "function square_digits($num) {\n    // Your code here\n}",
-                "c": "int square_digits(int num) {\n    // Your code here\n    return 0;\n}"
+                "php": "function square_digits($num) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 9119, "expected": 811181}, {"input": 0, "expected": 0}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": 9119, "expected": 811181}, {"input": 0, "expected": 0}]
         },
         {
             "id_base": "high_and_low",
@@ -346,11 +310,9 @@ def generate_challenges():
             "templates": {
                 "python": "def high_and_low(numbers):\n    # Your code here\n    pass",
                 "javascript": "function high_and_low(numbers) {\n    // Your code here\n}",
-                "php": "function high_and_low($numbers) {\n    // Your code here\n}",
-                "c": "char* high_and_low(char* numbers) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function high_and_low($numbers) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "1 2 3 4 5", "expected": "5 1"}, {"input": "1 2 -3 4 5", "expected": "5 -3"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "1 2 3 4 5", "expected": "5 1"}, {"input": "1 2 -3 4 5", "expected": "5 -3"}]
         },
         {
             "id_base": "get_middle",
@@ -364,11 +326,9 @@ def generate_challenges():
             "templates": {
                 "python": "def get_middle(s):\n    # Your code here\n    pass",
                 "javascript": "function get_middle(s) {\n    // Your code here\n}",
-                "php": "function get_middle($s) {\n    // Your code here\n}",
-                "c": "char* get_middle(char* s) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function get_middle($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "test", "expected": "es"}, {"input": "testing", "expected": "t"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "test", "expected": "es"}, {"input": "testing", "expected": "t"}]
         },
         {
             "id_base": "mumbling",
@@ -382,11 +342,9 @@ def generate_challenges():
             "templates": {
                 "python": "def accum(s):\n    # Your code here\n    pass",
                 "javascript": "function accum(s) {\n    // Your code here\n}",
-                "php": "function accum($s) {\n    // Your code here\n}",
-                "c": "char* accum(char* s) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function accum($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "abcd", "expected": "A-Bb-Ccc-Dddd"}, {"input": "RqaEzty", "expected": "R-Qq-Aaa-Eeee-Zzzzz-Tttttt-Yyyyyyy"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "abcd", "expected": "A-Bb-Ccc-Dddd"}, {"input": "RqaEzty", "expected": "R-Qq-Aaa-Eeee-Zzzzz-Tttttt-Yyyyyyy"}]
         },
         {
             "id_base": "is_square",
@@ -400,11 +358,9 @@ def generate_challenges():
             "templates": {
                 "python": "def is_square(n):\n    # Your code here\n    pass",
                 "javascript": "function is_square(n) {\n    // Your code here\n}",
-                "php": "function is_square($n) {\n    // Your code here\n}",
-                "c": "int is_square(int n) {\n    // Your code here\n    return 0;\n}"
+                "php": "function is_square($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": -1, "expected": False}, {"input": 0, "expected": True}, {"input": 25, "expected": True}, {"input": 26, "expected": False}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": -1, "expected": False}, {"input": 0, "expected": True}, {"input": 25, "expected": True}, {"input": 26, "expected": False}]
         },
         {
             "id_base": "list_filtering",
@@ -418,11 +374,9 @@ def generate_challenges():
             "templates": {
                 "python": "def filter_list(l):\n    # Your code here\n    pass",
                 "javascript": "function filter_list(l) {\n    // Your code here\n}",
-                "php": "function filter_list($l) {\n    // Your code here\n}",
-                "c": "int* filter_list(void** l, int size, int* out_size) {\n    // Your code here (C is tricky here, assume int array input for simplicity or skip C for this specific one)\n    return 0;\n}"
+                "php": "function filter_list($l) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [1, 2, "a", "b"], "expected": [1, 2]}],
-            "types": {"c": {"args": ["void**", "int", "int*"], "return": "int*"}} # C implementation might be complex, maybe skip C for this one in generator logic
+            "tests": [{"input": [1, 2, "a", "b"], "expected": [1, 2]}]
         },
         {
             "id_base": "isogram",
@@ -436,11 +390,9 @@ def generate_challenges():
             "templates": {
                 "python": "def is_isogram(string):\n    # Your code here\n    pass",
                 "javascript": "function is_isogram(string) {\n    // Your code here\n}",
-                "php": "function is_isogram($string) {\n    // Your code here\n}",
-                "c": "int is_isogram(char* string) {\n    // Your code here\n    return 0;\n}"
+                "php": "function is_isogram($string) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "Dermatoglyphics", "expected": True}, {"input": "aba", "expected": False}, {"input": "moOse", "expected": False}],
-            "types": {"c": {"args": ["char*"], "return": "int"}}
+            "tests": [{"input": "Dermatoglyphics", "expected": True}, {"input": "aba", "expected": False}, {"input": "moOse", "expected": False}]
         },
         {
             "id_base": "xo",
@@ -454,11 +406,9 @@ def generate_challenges():
             "templates": {
                 "python": "def xo(s):\n    # Your code here\n    pass",
                 "javascript": "function xo(s) {\n    // Your code here\n}",
-                "php": "function xo($s) {\n    // Your code here\n}",
-                "c": "int xo(char* s) {\n    // Your code here\n    return 0;\n}"
+                "php": "function xo($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "ooxx", "expected": True}, {"input": "xooxx", "expected": False}, {"input": "zpzpzpp", "expected": True}],
-            "types": {"c": {"args": ["char*"], "return": "int"}}
+            "tests": [{"input": "ooxx", "expected": True}, {"input": "xooxx", "expected": False}, {"input": "zpzpzpp", "expected": True}]
         },
         {
             "id_base": "shortest_word",
@@ -472,11 +422,9 @@ def generate_challenges():
             "templates": {
                 "python": "def find_short(s):\n    # Your code here\n    pass",
                 "javascript": "function find_short(s) {\n    // Your code here\n}",
-                "php": "function find_short($s) {\n    // Your code here\n}",
-                "c": "int find_short(char* s) {\n    // Your code here\n    return 0;\n}"
+                "php": "function find_short($s) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "bitcoin take over the world", "expected": 3}],
-            "types": {"c": {"args": ["char*"], "return": "int"}}
+            "tests": [{"input": "bitcoin take over the world", "expected": 3}]
         },
         {
             "id_base": "dna",
@@ -490,11 +438,9 @@ def generate_challenges():
             "templates": {
                 "python": "def dna_strand(dna):\n    # Your code here\n    pass",
                 "javascript": "function dna_strand(dna) {\n    // Your code here\n}",
-                "php": "function dna_strand($dna) {\n    // Your code here\n}",
-                "c": "char* dna_strand(char* dna) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function dna_strand($dna) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "ATTGC", "expected": "TAACG"}, {"input": "GTAT", "expected": "CATA"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "ATTGC", "expected": "TAACG"}, {"input": "GTAT", "expected": "CATA"}]
         },
         {
             "id_base": "sum_positive",
@@ -508,11 +454,9 @@ def generate_challenges():
             "templates": {
                 "python": "def positive_sum(arr):\n    # Your code here\n    pass",
                 "javascript": "function positive_sum(arr) {\n    // Your code here\n}",
-                "php": "function positive_sum($arr) {\n    // Your code here\n}",
-                "c": "int positive_sum(int* arr, int size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function positive_sum($arr) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [1, -4, 7, 12], "expected": 20}, {"input": [], "expected": 0}],
-            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+            "tests": [{"input": [1, -4, 7, 12], "expected": 20}, {"input": [], "expected": 0}]
         },
         {
             "id_base": "jaden_case",
@@ -526,11 +470,9 @@ def generate_challenges():
             "templates": {
                 "python": "def to_jaden_case(string):\n    # Your code here\n    pass",
                 "javascript": "function to_jaden_case(string) {\n    // Your code here\n}",
-                "php": "function to_jaden_case($string) {\n    // Your code here\n}",
-                "c": "char* to_jaden_case(char* string) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function to_jaden_case($string) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "How can mirrors be real", "expected": "How Can Mirrors Be Real"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "How can mirrors be real", "expected": "How Can Mirrors Be Real"}]
         },
         {
             "id_base": "friend_or_foe",
@@ -544,11 +486,9 @@ def generate_challenges():
             "templates": {
                 "python": "def friend(x):\n    # Your code here\n    pass",
                 "javascript": "function friend(x) {\n    // Your code here\n}",
-                "php": "function friend($x) {\n    // Your code here\n}",
-                "c": "char** friend(char** x, int size, int* out_size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function friend($x) {\n    // Your code here\n}"
             },
-            "tests": [{"input": ["Ryan", "Kieran", "Mark"], "expected": ["Ryan", "Mark"]}],
-            "types": {"c": {"args": ["char**", "int", "int*"], "return": "char**"}}
+            "tests": [{"input": ["Ryan", "Kieran", "Mark"], "expected": ["Ryan", "Mark"]}]
         },
 
         # --- HARD (10 unique) ---
@@ -564,11 +504,9 @@ def generate_challenges():
             "templates": {
                 "python": "def solution(number):\n    # Your code here\n    pass",
                 "javascript": "function solution(number) {\n    // Your code here\n}",
-                "php": "function solution($number) {\n    // Your code here\n}",
-                "c": "int solution(int number) {\n    // Your code here\n    return 0;\n}"
+                "php": "function solution($number) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 10, "expected": 23}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": 10, "expected": 23}]
         },
         {
             "id_base": "who_likes_it",
@@ -582,11 +520,9 @@ def generate_challenges():
             "templates": {
                 "python": "def likes(names):\n    # Your code here\n    pass",
                 "javascript": "function likes(names) {\n    // Your code here\n}",
-                "php": "function likes($names) {\n    // Your code here\n}",
-                "c": "char* likes(char** names, int count) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function likes($names) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [], "expected": "no one likes this"}, {"input": ["Peter"], "expected": "Peter likes this"}, {"input": ["Max", "John", "Mark"], "expected": "Max, John and Mark like this"}],
-            "types": {"c": {"args": ["char**", "int"], "return": "char*"}}
+            "tests": [{"input": [], "expected": "no one likes this"}, {"input": ["Peter"], "expected": "Peter likes this"}, {"input": ["Max", "John", "Mark"], "expected": "Max, John and Mark like this"}]
         },
         {
             "id_base": "spin_words",
@@ -600,11 +536,9 @@ def generate_challenges():
             "templates": {
                 "python": "def spin_words(sentence):\n    # Your code here\n    pass",
                 "javascript": "function spin_words(sentence) {\n    // Your code here\n}",
-                "php": "function spin_words($sentence) {\n    // Your code here\n}",
-                "c": "char* spin_words(char* sentence) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function spin_words($sentence) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "Hey fellow warriors", "expected": "Hey wollef sroirraw"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "Hey fellow warriors", "expected": "Hey wollef sroirraw"}]
         },
         {
             "id_base": "find_odd",
@@ -618,11 +552,9 @@ def generate_challenges():
             "templates": {
                 "python": "def find_it(seq):\n    # Your code here\n    pass",
                 "javascript": "function find_it(seq) {\n    // Your code here\n}",
-                "php": "function find_it($seq) {\n    // Your code here\n}",
-                "c": "int find_it(int* seq, int size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function find_it($seq) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [1, 1, 2], "expected": 2}, {"input": [0, 1, 0, 1, 0], "expected": 0}],
-            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+            "tests": [{"input": [1, 1, 2], "expected": 2}, {"input": [0, 1, 0, 1, 0], "expected": 0}]
         },
         {
             "id_base": "array_diff",
@@ -636,11 +568,9 @@ def generate_challenges():
             "templates": {
                 "python": "def array_diff(a, b):\n    # Your code here\n    pass",
                 "javascript": "function array_diff(a, b) {\n    // Your code here\n}",
-                "php": "function array_diff($a, $b) {\n    // Your code here\n}",
-                "c": "int* array_diff(int* a, int a_size, int* b, int b_size, int* out_size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function array_diff($a, $b) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [[1, 2], [1]], "expected": [2]}, {"input": [[1, 2, 2, 2, 3], [2]], "expected": [1, 3]}],
-            "types": {"c": {"args": ["int*", "int", "int*", "int", "int*"], "return": "int*"}}
+            "tests": [{"input": [[1, 2], [1]], "expected": [2]}, {"input": [[1, 2, 2, 2, 3], [2]], "expected": [1, 3]}]
         },
         {
             "id_base": "create_phone_number",
@@ -654,11 +584,9 @@ def generate_challenges():
             "templates": {
                 "python": "def create_phone_number(n):\n    # Your code here\n    pass",
                 "javascript": "function create_phone_number(n) {\n    // Your code here\n}",
-                "php": "function create_phone_number($n) {\n    // Your code here\n}",
-                "c": "char* create_phone_number(int* n) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function create_phone_number($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [1, 2, 3, 4, 5, 6, 7, 8, 9, 0], "expected": "(123) 456-7890"}],
-            "types": {"c": {"args": ["int*"], "return": "char*"}}
+            "tests": [{"input": [1, 2, 3, 4, 5, 6, 7, 8, 9, 0], "expected": "(123) 456-7890"}]
         },
         {
             "id_base": "digital_root",
@@ -672,11 +600,9 @@ def generate_challenges():
             "templates": {
                 "python": "def digital_root(n):\n    # Your code here\n    pass",
                 "javascript": "function digital_root(n) {\n    // Your code here\n}",
-                "php": "function digital_root($n) {\n    // Your code here\n}",
-                "c": "int digital_root(int n) {\n    // Your code here\n    return 0;\n}"
+                "php": "function digital_root($n) {\n    // Your code here\n}"
             },
-            "tests": [{"input": 16, "expected": 7}, {"input": 942, "expected": 6}],
-            "types": {"c": {"args": ["int"], "return": "int"}}
+            "tests": [{"input": 16, "expected": 7}, {"input": 942, "expected": 6}]
         },
         {
             "id_base": "duplicate_encoder",
@@ -690,11 +616,9 @@ def generate_challenges():
             "templates": {
                 "python": "def duplicate_encode(word):\n    # Your code here\n    pass",
                 "javascript": "function duplicate_encode(word) {\n    // Your code here\n}",
-                "php": "function duplicate_encode($word) {\n    // Your code here\n}",
-                "c": "char* duplicate_encode(char* word) {\n    // Your code here\n    return \"\";\n}"
+                "php": "function duplicate_encode($word) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "din", "expected": "((("}, {"input": "recede", "expected": "()()()"}],
-            "types": {"c": {"args": ["char*"], "return": "char*"}}
+            "tests": [{"input": "din", "expected": "((("}, {"input": "recede", "expected": "()()()"}]
         },
         {
             "id_base": "parity_outlier",
@@ -708,11 +632,9 @@ def generate_challenges():
             "templates": {
                 "python": "def find_outlier(integers):\n    # Your code here\n    pass",
                 "javascript": "function find_outlier(integers) {\n    // Your code here\n}",
-                "php": "function find_outlier($integers) {\n    // Your code here\n}",
-                "c": "int find_outlier(int* integers, int size) {\n    // Your code here\n    return 0;\n}"
+                "php": "function find_outlier($integers) {\n    // Your code here\n}"
             },
-            "tests": [{"input": [2, 4, 0, 100, 4, 11, 2602, 36], "expected": 11}, {"input": [160, 3, 1719, 19, 11, 13, -21], "expected": 160}],
-            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+            "tests": [{"input": [2, 4, 0, 100, 4, 11, 2602, 36], "expected": 11}, {"input": [160, 3, 1719, 19, 11, 13, -21], "expected": 160}]
         },
         {
             "id_base": "counting_duplicates",
@@ -726,11 +648,9 @@ def generate_challenges():
             "templates": {
                 "python": "def duplicate_count(text):\n    # Your code here\n    pass",
                 "javascript": "function duplicate_count(text) {\n    // Your code here\n}",
-                "php": "function duplicate_count($text) {\n    // Your code here\n}",
-                "c": "int duplicate_count(char* text) {\n    // Your code here\n    return 0;\n}"
+                "php": "function duplicate_count($text) {\n    // Your code here\n}"
             },
-            "tests": [{"input": "abcde", "expected": 0}, {"input": "aabbcde", "expected": 2}, {"input": "aabBcde", "expected": 2}],
-            "types": {"c": {"args": ["char*"], "return": "int"}}
+            "tests": [{"input": "abcde", "expected": 0}, {"input": "aabbcde", "expected": 2}, {"input": "aabBcde", "expected": 2}]
         }
     ]
 
