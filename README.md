@@ -46,7 +46,11 @@
 
 - **OS** : Linux (testé sur Ubuntu/Debian)
 - **Python** : 3.10+
+- **Node.js** : Pour les challenges JavaScript (v14+ recommandé)
+- **PHP** : Pour les challenges PHP (v7.4+ recommandé)
 - **Environnement** : Desktop avec gestionnaire de fenêtres
+
+> ℹ️ **Note** : Le script d'installation propose d'installer automatiquement Node.js et PHP s'ils sont absents. Vous pouvez aussi utiliser uniquement Python si vous préférez.
 
 ---
 

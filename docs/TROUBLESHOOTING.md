@@ -51,6 +51,20 @@ python3 -c "import PySide6, psutil, requests"
 pip install --force-reinstall PySide6 psutil requests
 ```
 
+**6. Node.js ou PHP manquant**
+Si les challenges JavaScript ou PHP ne fonctionnent pas :
+```bash
+# Vérifier Node.js
+node --version
+# Si absent :
+sudo apt install nodejs  # Ubuntu/Debian
+
+# Vérifier PHP
+php --version
+# Si absent :
+sudo apt install php-cli  # Ubuntu/Debian
+```
+
 ---
 
 ### Watchdog ne démarre pas
@@ -389,6 +403,62 @@ L'environnement d'exécution est isolé. Seuls les modules standard sont disponi
 Utilisez uniquement la bibliothèque standard :
 - ✅ `math`, `collections`, `itertools`, `functools`
 - ❌ `numpy`, `pandas`, `requests`
+
+---
+
+### Challenges JavaScript ne fonctionnent pas
+
+#### Symptôme
+```
+ERROR: node: command not found
+```
+
+#### Solution
+```bash
+# Vérifier Node.js
+node --version
+
+# Si absent, installer
+# Ubuntu/Debian
+sudo apt update && sudo apt install nodejs
+
+# Fedora
+sudo dnf install nodejs
+
+# Arch
+sudo pacman -S nodejs
+
+# Vérifier l'installation
+node --version  # Doit afficher v14.x ou supérieur
+```
+
+---
+
+### Challenges PHP ne fonctionnent pas
+
+#### Symptôme
+```
+ERROR: php: command not found
+```
+
+#### Solution
+```bash
+# Vérifier PHP
+php --version
+
+# Si absent, installer
+# Ubuntu/Debian
+sudo apt update && sudo apt install php-cli
+
+# Fedora
+sudo dnf install php-cli
+
+# Arch
+sudo pacman -S php
+
+# Vérifier l'installation
+php --version  # Doit afficher 7.4 ou supérieur
+```
 
 ---
 

@@ -6,8 +6,25 @@
 **R:** 
 - Linux (Ubuntu, Debian, Fedora, Arch, etc.)
 - Python 3.10 ou supérieur
+- **Node.js** (v14+) pour les challenges JavaScript
+- **PHP** (v7.4+) pour les challenges PHP
 - Environnement desktop (GNOME, KDE, XFCE, etc.)
 - 100 MB d'espace disque
+
+### Q: Node.js et PHP sont-ils obligatoires ?
+**R:** Non ! Si vous n'avez que Python installé, vous pourrez toujours :
+- Utiliser CodeGate
+- Résoudre les challenges **Python uniquement**
+- Le script `install.sh` détecte automatiquement les langages manquants et propose de les installer
+
+**Pour installer manuellement** :
+```bash
+# Node.js (Ubuntu/Debian)
+sudo apt install nodejs
+
+# PHP (Ubuntu/Debian)
+sudo apt install php-cli
+```
 
 ### Q: CodeGate fonctionne-t-il sans connexion internet ?
 **R:** Oui ! CodeGate est 100% fonctionnel hors ligne. Tous les 200+ challenges sont embarqués dans `assets/challenges.json`.

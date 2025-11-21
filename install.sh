@@ -65,7 +65,81 @@ else
 fi
 
 #-------------------------------------------------------------------------------
-# Step 2: Create virtual environment
+# Step 2: Check Node.js (for JavaScript challenges)
+#-------------------------------------------------------------------------------
+print_info "Checking Node.js..."
+
+if ! command -v node &> /dev/null; then
+    print_warning "Node.js is not installed!"
+    print_info "Node.js is required to run JavaScript challenges."
+    
+    read -p "Install Node.js now? (y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_info "Installing Node.js..."
+        # Ubuntu/Debian
+        if command -v apt &> /dev/null; then
+            sudo apt update
+            sudo apt install -y nodejs
+        # Fedora/RHEL
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y nodejs
+        # Arch
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm nodejs
+        else
+            print_error "Cannot auto-install Node.js on this distribution"
+            print_info "Please install manually: https://nodejs.org"
+            print_warning "JavaScript challenges will NOT work without Node.js"
+        fi
+    else
+        print_warning "Skipping Node.js installation"
+        print_warning "JavaScript challenges will NOT work without Node.js"
+    fi
+else
+    NODE_VERSION=$(node --version 2>&1)
+    print_success "Node.js $NODE_VERSION found"
+fi
+
+#-------------------------------------------------------------------------------
+# Step 3: Check PHP (for PHP challenges)
+#-------------------------------------------------------------------------------
+print_info "Checking PHP..."
+
+if ! command -v php &> /dev/null; then
+    print_warning "PHP is not installed!"
+    print_info "PHP is required to run PHP challenges."
+    
+    read -p "Install PHP now? (y/n): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        print_info "Installing PHP..."
+        # Ubuntu/Debian
+        if command -v apt &> /dev/null; then
+            sudo apt update
+            sudo apt install -y php-cli
+        # Fedora/RHEL
+        elif command -v dnf &> /dev/null; then
+            sudo dnf install -y php-cli
+        # Arch
+        elif command -v pacman &> /dev/null; then
+            sudo pacman -S --noconfirm php
+        else
+            print_error "Cannot auto-install PHP on this distribution"
+            print_info "Please install manually"
+            print_warning "PHP challenges will NOT work without PHP"
+        fi
+    else
+        print_warning "Skipping PHP installation"
+        print_warning "PHP challenges will NOT work without PHP"
+    fi
+else
+    PHP_VERSION=$(php --version 2>&1 | head -n 1 | awk '{print $2}')
+    print_success "PHP $PHP_VERSION found"
+fi
+
+#-------------------------------------------------------------------------------
+# Step 4: Create virtual environment
 #-------------------------------------------------------------------------------
 print_info "Setting up virtual environment..."
 
@@ -77,7 +151,7 @@ else
 fi
 
 #-------------------------------------------------------------------------------
-# Step 3: Install dependencies
+# Step 5: Install dependencies
 #-------------------------------------------------------------------------------
 print_info "Installing dependencies..."
 
@@ -87,7 +161,7 @@ print_info "Installing dependencies..."
 print_success "Dependencies installed"
 
 #-------------------------------------------------------------------------------
-# Step 4: Create necessary directories
+# Step 6: Create necessary directories
 #-------------------------------------------------------------------------------
 print_info "Creating application directories..."
 
@@ -97,7 +171,7 @@ mkdir -p "$HOME/.config/autostart"
 print_success "Directories created"
 
 #-------------------------------------------------------------------------------
-# Step 5: Make scripts executable
+# Step 7: Make scripts executable
 #-------------------------------------------------------------------------------
 print_info "Setting permissions..."
 
@@ -106,7 +180,7 @@ chmod +x "$INSTALL_DIR/run_codegate.sh"
 print_success "Scripts made executable"
 
 #-------------------------------------------------------------------------------
-# Step 6: Configure autostart
+# Step 8: Configure autostart
 #-------------------------------------------------------------------------------
 print_info "Configuring autostart..."
 
@@ -130,7 +204,7 @@ EOF
 print_success "Autostart configured: $DESKTOP_FILE"
 
 #-------------------------------------------------------------------------------
-# Step 7: Create default config if needed
+# Step 9: Create default config if needed
 #-------------------------------------------------------------------------------
 print_info "Checking configuration..."
 
@@ -150,7 +224,7 @@ else
 fi
 
 #-------------------------------------------------------------------------------
-# Step 8: Test installation
+# Step 10: Test installation
 #-------------------------------------------------------------------------------
 print_info "Testing installation..."
 
