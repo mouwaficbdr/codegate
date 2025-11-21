@@ -10,28 +10,94 @@ from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
 from src.i18n_manager import I18nManager
 from src.code_runner import CodeRunner
 
-# --- Syntax Highlighter (Same as before) ---
-class PythonHighlighter(QSyntaxHighlighter):
-    def __init__(self, parent=None):
+# --- Syntax Highlighter (Multi-language) ---
+class CodeHighlighter(QSyntaxHighlighter):
+    def __init__(self, parent=None, language="python"):
         super().__init__(parent)
+        self.language = language
+        self.highlighting_rules = []
+        self.setup_rules()
+
+    def set_language(self, language):
+        """Change le langage de coloration et raffraîchit l'affichage"""
+        self.language = language
+        self.setup_rules()
+        self.rehighlight()
+
+    def setup_rules(self):
+        """Configure les règles de coloration selon le langage"""
         self.highlighting_rules = []
 
+        # Format pour les mots-clés
         keyword_format = QTextCharFormat()
-        keyword_format.setForeground(QColor("#569CD6")) # Blue
+        keyword_format.setForeground(QColor("#569CD6"))  # Blue
         keyword_format.setFontWeight(QFont.Bold)
-        keywords = ["def", "class", "if", "else", "elif", "while", "for", "return", "import", "from", "pass", "try", "except", "print"]
+
+        # Format pour les chaînes
+        string_format = QTextCharFormat()
+        string_format.setForeground(QColor("#CE9178"))  # Orange
+
+        # Format pour les commentaires
+        comment_format = QTextCharFormat()
+        comment_format.setForeground(QColor("#6A9955"))  # Green
+
+        # Format pour les nombres
+        number_format = QTextCharFormat()
+        number_format.setForeground(QColor("#B5CEA8"))  # Light green
+
+        # Mots-clés spécifiques au langage
+        if self.language == "python":
+            keywords = [
+                "def", "class", "if", "else", "elif", "while", "for", "in", "return", 
+                "import", "from", "as", "pass", "try", "except", "finally", "with",
+                "raise", "assert", "break", "continue", "yield", "lambda", "and", 
+                "or", "not", "is", "None", "True", "False", "self", "print", "len",
+                "range", "str", "int", "float", "list", "dict", "set", "tuple"
+            ]
+            # Commentaires Python (#)
+            self.highlighting_rules.append((QRegularExpression("#[^\\n]*"), comment_format))
+            
+        elif self.language == "javascript":
+            keywords = [
+                "function", "const", "let", "var", "if", "else", "for", "while", "do",
+                "switch", "case", "break", "continue", "return", "try", "catch", 
+                "finally", "throw", "new", "this", "typeof", "instanceof", "delete",
+                "in", "of", "class", "extends", "super", "static", "async", "await",
+                "null", "undefined", "true", "false", "console", "log", "push", "pop"
+            ]
+            # Commentaires JavaScript (//)
+            self.highlighting_rules.append((QRegularExpression("//[^\\n]*"), comment_format))
+            # Commentaires multi-lignes (/* */)
+            self.highlighting_rules.append((QRegularExpression("/\\*.*\\*/"), comment_format))
+            
+        elif self.language == "php":
+            keywords = [
+                "function", "if", "else", "elseif", "while", "for", "foreach", "do",
+                "switch", "case", "break", "continue", "return", "try", "catch",
+                "finally", "throw", "new", "class", "extends", "public", "private",
+                "protected", "static", "const", "var", "echo", "print", "array",
+                "true", "false", "null", "as", "and", "or", "require", "include",
+                "isset", "empty", "unset", "die", "exit", "$this", "self", "parent"
+            ]
+            # Commentaires PHP (// et #)
+            self.highlighting_rules.append((QRegularExpression("//[^\\n]*"), comment_format))
+            self.highlighting_rules.append((QRegularExpression("#[^\\n]*"), comment_format))
+            # Commentaires multi-lignes (/* */)
+            self.highlighting_rules.append((QRegularExpression("/\\*.*\\*/"), comment_format))
+
+        # Ajouter les mots-clés
         for word in keywords:
-            pattern = QRegularExpression(f"\\b{word}\\b")
+            # Échapper les caractères spéciaux comme $
+            escaped_word = word.replace("$", "\\$")
+            pattern = QRegularExpression(f"\\b{escaped_word}\\b")
             self.highlighting_rules.append((pattern, keyword_format))
 
-        string_format = QTextCharFormat()
-        string_format.setForeground(QColor("#CE9178")) # Orange
-        self.highlighting_rules.append((QRegularExpression("\".*\""), string_format))
-        self.highlighting_rules.append((QRegularExpression("'.*'"), string_format))
-        
-        comment_format = QTextCharFormat()
-        comment_format.setForeground(QColor("#6A9955")) # Green
-        self.highlighting_rules.append((QRegularExpression("#[^\n]*"), comment_format))
+        # Chaînes de caractères (doubles et simples guillemets)
+        self.highlighting_rules.append((QRegularExpression('"[^"\\\\]*(\\\\.[^"\\\\]*)*"'), string_format))
+        self.highlighting_rules.append((QRegularExpression("'[^'\\\\]*(\\\\.[^'\\\\]*)*'"), string_format))
+
+        # Nombres
+        self.highlighting_rules.append((QRegularExpression("\\b[0-9]+\\.?[0-9]*\\b"), number_format))
 
     def highlightBlock(self, text):
         for pattern, format in self.highlighting_rules:
@@ -39,6 +105,7 @@ class PythonHighlighter(QSyntaxHighlighter):
             while match_iterator.hasNext():
                 match = match_iterator.next()
                 self.setFormat(match.capturedStart(), match.capturedLength(), format)
+
 
 # --- Settings Dialog (Same as before) ---
 class SettingsDialog(QDialog):
@@ -250,7 +317,7 @@ class OverlayWindow(QMainWindow):
         editor_layout.addWidget(editor_label)
         
         self.code_editor = QTextEdit()
-        self.highlighter = PythonHighlighter(self.code_editor.document())
+        self.highlighter = CodeHighlighter(self.code_editor.document(), language="python")
         editor_layout.addWidget(self.code_editor)
         
         right_splitter.addWidget(editor_widget)
@@ -356,6 +423,9 @@ class OverlayWindow(QMainWindow):
         templates = self.current_challenge.get("templates", {})
         template = templates.get(lang, f"// No template for {lang}")
         self.code_editor.setText(template)
+        
+        # Changer la coloration syntaxique selon le langage
+        self.highlighter.set_language(lang)
 
     @Slot()
     def run_sample_tests(self):
