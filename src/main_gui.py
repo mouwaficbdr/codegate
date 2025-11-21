@@ -432,7 +432,15 @@ class OverlayWindow(QMainWindow):
         # --- Header Bar ---
         header = QHBoxLayout()
         header.setContentsMargins(10, 10, 10, 10)
-        header.addWidget(QLabel("CodeGate"))
+        
+        # Titre CodeGate stylisé
+        title_label = QLabel("⚡ CodeGate")
+        title_font = title_label.font()
+        title_font.setPointSize(18)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setStyleSheet("color: #4A9EFF; padding: 5px;")
+        header.addWidget(title_label)
         
         header.addStretch()
         
