@@ -1,0 +1,80 @@
+# Environnements virtuels Python
+venv/
+env/
+ENV/
+.venv
+
+# Fichiers compilés Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Cache et fichiers de distribution
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Tests et couverture
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Fichiers de configuration locale
+config.json
+*.local.json
+
+# Logs
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Fichiers temporaires
+*.tmp
+*.bak
+*.orig
+
+# Base de données locale (si applicable)
+*.db
+*.sqlite
+*.sqlite3

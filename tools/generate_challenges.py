@@ -1,0 +1,774 @@
+import json
+import os
+import random
+
+def generate_challenges():
+    # Target: 120 Challenges
+    # Distribution: 30 Easy, 60 Medium, 30 Hard
+    
+    topics = [
+        # --- EASY (15 unique) ---
+        {
+            "id_base": "sum_array",
+            "title": "Sum of Array",
+            "description": "Write a function that takes an array of integers and returns the sum of its elements.",
+            "objective": "Calculate the total sum of all numbers in the given list.",
+            "constraints": "<ul><li>Array length: 0 <= N <= 1000</li><li>Element values: -1000 <= x <= 1000</li></ul>",
+            "examples": "<pre>Input: [1, 2, 3]\nOutput: 6\n\nInput: [-1, 1]\nOutput: 0</pre>",
+            "difficulty": "Easy",
+            "function_name": "sum_array",
+            "templates": {
+                "python": "def sum_array(arr):\n    # Your code here\n    pass",
+                "javascript": "function sum_array(arr) {\n    // Your code here\n}",
+                "php": "function sum_array($arr) {\n    // Your code here\n}",
+                "c": "int sum_array(int* arr, int size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": [1, 2, 3], "expected": 6}, {"input": [], "expected": 0}, {"input": [-5, 5], "expected": 0}],
+            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "even_or_odd",
+            "title": "Even or Odd",
+            "description": "Create a function that takes an integer as an argument and returns 'Even' for even numbers or 'Odd' for odd numbers.",
+            "objective": "Return string 'Even' or 'Odd'.",
+            "constraints": "<ul><li>Integer input</li></ul>",
+            "examples": "<pre>Input: 2\nOutput: 'Even'\n\nInput: 7\nOutput: 'Odd'</pre>",
+            "difficulty": "Easy",
+            "function_name": "even_or_odd",
+            "templates": {
+                "python": "def even_or_odd(n):\n    # Your code here\n    pass",
+                "javascript": "function even_or_odd(n) {\n    // Your code here\n}",
+                "php": "function even_or_odd($n) {\n    // Your code here\n}",
+                "c": "char* even_or_odd(int n) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": 2, "expected": "Even"}, {"input": 0, "expected": "Even"}, {"input": 7, "expected": "Odd"}],
+            "types": {"c": {"args": ["int"], "return": "char*"}}
+        },
+        {
+            "id_base": "return_negative",
+            "title": "Return Negative",
+            "description": "In this assignment you are given a number and have to make it negative. But maybe the number is already negative?",
+            "objective": "Return the negative value of the input.",
+            "constraints": "<ul><li>Input is an integer</li></ul>",
+            "examples": "<pre>Input: 1\nOutput: -1\n\nInput: -5\nOutput: -5\n\nInput: 0\nOutput: 0</pre>",
+            "difficulty": "Easy",
+            "function_name": "make_negative",
+            "templates": {
+                "python": "def make_negative(n):\n    # Your code here\n    pass",
+                "javascript": "function make_negative(n) {\n    // Your code here\n}",
+                "php": "function make_negative($n) {\n    // Your code here\n}",
+                "c": "int make_negative(int n) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 1, "expected": -1}, {"input": -5, "expected": -5}, {"input": 0, "expected": 0}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "opposite_number",
+            "title": "Opposite Number",
+            "description": "Very simple, given an integer or a floating-point number, find its opposite.",
+            "objective": "Return -n.",
+            "constraints": "<ul><li>Input is a number</li></ul>",
+            "examples": "<pre>Input: 1\nOutput: -1\n\nInput: -14\nOutput: 14</pre>",
+            "difficulty": "Easy",
+            "function_name": "opposite",
+            "templates": {
+                "python": "def opposite(n):\n    # Your code here\n    pass",
+                "javascript": "function opposite(n) {\n    // Your code here\n}",
+                "php": "function opposite($n) {\n    // Your code here\n}",
+                "c": "int opposite(int n) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 1, "expected": -1}, {"input": -34, "expected": 34}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "bool_to_string",
+            "title": "Convert Boolean to String",
+            "description": "Implement a function which convert the given boolean value into its string representation.",
+            "objective": "Return 'True' or 'False' (or 'true'/'false' depending on language convention, here we standardize on string output).",
+            "constraints": "<ul><li>Input is boolean</li></ul>",
+            "examples": "<pre>Input: true\nOutput: 'true'\n\nInput: false\nOutput: 'false'</pre>",
+            "difficulty": "Easy",
+            "function_name": "bool_to_word",
+            "templates": {
+                "python": "def bool_to_word(b):\n    # Your code here\n    pass",
+                "javascript": "function bool_to_word(b) {\n    // Your code here\n}",
+                "php": "function bool_to_word($b) {\n    // Your code here\n}",
+                "c": "char* bool_to_word(int b) {\n    // Your code here (1=true, 0=false)\n    return \"\";\n}"
+            },
+            "tests": [{"input": True, "expected": "true"}, {"input": False, "expected": "false"}],
+            "types": {"c": {"args": ["int"], "return": "char*"}}
+        },
+        {
+            "id_base": "remove_char",
+            "title": "Remove First and Last Character",
+            "description": "It's pretty straightforward. Your goal is to create a function that removes the first and last characters of a string.",
+            "objective": "Return the string without its first and last char.",
+            "constraints": "<ul><li>String length >= 2</li></ul>",
+            "examples": "<pre>Input: 'eloquent'\nOutput: 'loquen'</pre>",
+            "difficulty": "Easy",
+            "function_name": "remove_char",
+            "templates": {
+                "python": "def remove_char(s):\n    # Your code here\n    pass",
+                "javascript": "function remove_char(s) {\n    // Your code here\n}",
+                "php": "function remove_char($s) {\n    // Your code here\n}",
+                "c": "char* remove_char(char* s) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "eloquent", "expected": "loquen"}, {"input": "country", "expected": "ountr"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "repeat_str",
+            "title": "String Repeat",
+            "description": "Write a function that accepts an integer n and a string s as parameters, and returns a string of s repeated exactly n times.",
+            "objective": "Return s repeated n times.",
+            "constraints": "<ul><li>n >= 0</li></ul>",
+            "examples": "<pre>Input: 3, 'I'\nOutput: 'III'\n\nInput: 5, 'Hello'\nOutput: 'HelloHelloHelloHelloHello'</pre>",
+            "difficulty": "Easy",
+            "function_name": "repeat_str",
+            "templates": {
+                "python": "def repeat_str(n, s):\n    # Your code here\n    pass",
+                "javascript": "function repeat_str(n, s) {\n    // Your code here\n}",
+                "php": "function repeat_str($n, $s) {\n    // Your code here\n}",
+                "c": "char* repeat_str(int n, char* s) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": [3, "*"], "expected": "***"}, {"input": [2, "ha"], "expected": "haha"}],
+            "types": {"c": {"args": ["int", "char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "no_space",
+            "title": "Remove String Spaces",
+            "description": "Simple, remove the spaces from the string, then return the resultant string.",
+            "objective": "Strip all whitespace.",
+            "constraints": "<ul><li>Input is string</li></ul>",
+            "examples": "<pre>Input: '8 j 8   mBliB8g  imjB8B8  jl  B'\nOutput: '8j8mBliB8gimjB8B8jlB'</pre>",
+            "difficulty": "Easy",
+            "function_name": "no_space",
+            "templates": {
+                "python": "def no_space(s):\n    # Your code here\n    pass",
+                "javascript": "function no_space(s) {\n    // Your code here\n}",
+                "php": "function no_space($s) {\n    // Your code here\n}",
+                "c": "char* no_space(char* s) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "8 j 8   mBliB8g  imjB8B8  jl  B", "expected": "8j8mBliB8gimjB8B8jlB"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "smallest_int",
+            "title": "Find Smallest Integer",
+            "description": "Given an array of integers your solution should find the smallest integer.",
+            "objective": "Return min value.",
+            "constraints": "<ul><li>Array not empty</li></ul>",
+            "examples": "<pre>Input: [34, 15, 88, 2]\nOutput: 2</pre>",
+            "difficulty": "Easy",
+            "function_name": "find_smallest_int",
+            "templates": {
+                "python": "def find_smallest_int(arr):\n    # Your code here\n    pass",
+                "javascript": "function find_smallest_int(arr) {\n    // Your code here\n}",
+                "php": "function find_smallest_int($arr) {\n    // Your code here\n}",
+                "c": "int find_smallest_int(int* arr, int size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": [34, 15, 88, 2], "expected": 2}, {"input": [34, -345, -1, 100], "expected": -345}],
+            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "count_sheep",
+            "title": "Counting Sheep",
+            "description": "Consider an array/list of sheep where some sheep may be missing from their place. We need a function that counts the number of sheep present in the array (true means present).",
+            "objective": "Count number of true values.",
+            "constraints": "<ul><li>Input is array of booleans</li></ul>",
+            "examples": "<pre>Input: [true, true, true, false]\nOutput: 3</pre>",
+            "difficulty": "Easy",
+            "function_name": "count_sheeps",
+            "templates": {
+                "python": "def count_sheeps(arr):\n    # Your code here\n    pass",
+                "javascript": "function count_sheeps(arr) {\n    // Your code here\n}",
+                "php": "function count_sheeps($arr) {\n    // Your code here\n}",
+                "c": "int count_sheeps(int* arr, int size) {\n    // Your code here (1=true, 0=false)\n    return 0;\n}"
+            },
+            "tests": [{"input": [True, True, True, False, True], "expected": 4}],
+            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "century_from_year",
+            "title": "Century From Year",
+            "description": "The first century spans from the year 1 up to and including the year 100, the second - from the year 101 up to and including the year 200, etc.",
+            "objective": "Given a year, return the century it is in.",
+            "constraints": "<ul><li>1 <= year <= 200000</li></ul>",
+            "examples": "<pre>Input: 1705\nOutput: 18\n\nInput: 1900\nOutput: 19</pre>",
+            "difficulty": "Easy",
+            "function_name": "century",
+            "templates": {
+                "python": "def century(year):\n    # Your code here\n    pass",
+                "javascript": "function century(year) {\n    // Your code here\n}",
+                "php": "function century($year) {\n    // Your code here\n}",
+                "c": "int century(int year) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 1705, "expected": 18}, {"input": 1900, "expected": 19}, {"input": 1601, "expected": 17}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "basic_op",
+            "title": "Basic Mathematical Operations",
+            "description": "Your task is to create a function that does four basic mathematical operations.",
+            "objective": "The function should take three arguments - operation(string/char), value1(number), value2(number).",
+            "constraints": "<ul><li>Op: '+', '-', '*', '/'</li></ul>",
+            "examples": "<pre>Input: '+', 4, 7\nOutput: 11</pre>",
+            "difficulty": "Easy",
+            "function_name": "basic_op",
+            "templates": {
+                "python": "def basic_op(op, v1, v2):\n    # Your code here\n    pass",
+                "javascript": "function basic_op(op, v1, v2) {\n    // Your code here\n}",
+                "php": "function basic_op($op, $v1, $v2) {\n    // Your code here\n}",
+                "c": "int basic_op(char op, int v1, int v2) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": ["+", 4, 7], "expected": 11}, {"input": ["-", 15, 18], "expected": -3}],
+            "types": {"c": {"args": ["char", "int", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "is_divisible",
+            "title": "Is n divisible by x and y?",
+            "description": "Create a function that checks if a number n is divisible by two numbers x AND y.",
+            "objective": "Return true if n is divisible by both x and y, false otherwise.",
+            "constraints": "<ul><li>Inputs are positive non-zero digits</li></ul>",
+            "examples": "<pre>Input: 3, 1, 3\nOutput: true</pre>",
+            "difficulty": "Easy",
+            "function_name": "is_divisible",
+            "templates": {
+                "python": "def is_divisible(n, x, y):\n    # Your code here\n    pass",
+                "javascript": "function is_divisible(n, x, y) {\n    // Your code here\n}",
+                "php": "function is_divisible($n, $x, $y) {\n    // Your code here\n}",
+                "c": "int is_divisible(int n, int x, int y) {\n    // Your code here (1=true, 0=false)\n    return 0;\n}"
+            },
+            "tests": [{"input": [3, 1, 3], "expected": True}, {"input": [12, 2, 6], "expected": True}, {"input": [100, 5, 3], "expected": False}],
+            "types": {"c": {"args": ["int", "int", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "abbrev_name",
+            "title": "Abbreviate a Two Word Name",
+            "description": "Write a function to convert a name into initials.",
+            "objective": "Return two capital letters with a dot separating them.",
+            "constraints": "<ul><li>Input is string 'First Last'</li></ul>",
+            "examples": "<pre>Input: 'Sam Harris'\nOutput: 'S.H'</pre>",
+            "difficulty": "Easy",
+            "function_name": "abbrev_name",
+            "templates": {
+                "python": "def abbrev_name(name):\n    # Your code here\n    pass",
+                "javascript": "function abbrev_name(name) {\n    // Your code here\n}",
+                "php": "function abbrev_name($name) {\n    // Your code here\n}",
+                "c": "char* abbrev_name(char* name) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "Sam Harris", "expected": "S.H"}, {"input": "patrick feeney", "expected": "P.F"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "reversed_sequence",
+            "title": "Reversed sequence",
+            "description": "Build a function that returns an array of integers from n to 1 where n>0.",
+            "objective": "Return [n, n-1, ..., 1].",
+            "constraints": "<ul><li>n > 0</li></ul>",
+            "examples": "<pre>Input: 5\nOutput: [5, 4, 3, 2, 1]</pre>",
+            "difficulty": "Easy",
+            "function_name": "reverse_seq",
+            "templates": {
+                "python": "def reverse_seq(n):\n    # Your code here\n    pass",
+                "javascript": "function reverse_seq(n) {\n    // Your code here\n}",
+                "php": "function reverse_seq($n) {\n    // Your code here\n}",
+                "c": "int* reverse_seq(int n) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 5, "expected": [5, 4, 3, 2, 1]}],
+            "types": {"c": {"args": ["int"], "return": "int*"}}
+        },
+
+        # --- MEDIUM (15 unique) ---
+        {
+            "id_base": "vowel_count",
+            "title": "Vowel Count",
+            "description": "Return the number (count) of vowels in the given string.",
+            "objective": "Count 'a', 'e', 'i', 'o', 'u'.",
+            "constraints": "<ul><li>Input string consists of lower case letters and/or spaces.</li></ul>",
+            "examples": "<pre>Input: 'abracadabra'\nOutput: 5</pre>",
+            "difficulty": "Medium",
+            "function_name": "get_count",
+            "templates": {
+                "python": "def get_count(s):\n    # Your code here\n    pass",
+                "javascript": "function get_count(s) {\n    // Your code here\n}",
+                "php": "function get_count($s) {\n    // Your code here\n}",
+                "c": "int get_count(char* s) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": "abracadabra", "expected": 5}],
+            "types": {"c": {"args": ["char*"], "return": "int"}}
+        },
+        {
+            "id_base": "disemvowel",
+            "title": "Disemvowel Trolls",
+            "description": "Your task is to write a function that takes a string and return a new string with all vowels removed.",
+            "objective": "Remove a, e, i, o, u (case insensitive).",
+            "constraints": "<ul><li>y is not a vowel</li></ul>",
+            "examples": "<pre>Input: 'This website is for losers LOL!'\nOutput: 'Ths wbst s fr lsrs LL!'</pre>",
+            "difficulty": "Medium",
+            "function_name": "disemvowel",
+            "templates": {
+                "python": "def disemvowel(s):\n    # Your code here\n    pass",
+                "javascript": "function disemvowel(s) {\n    // Your code here\n}",
+                "php": "function disemvowel($s) {\n    // Your code here\n}",
+                "c": "char* disemvowel(char* s) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "This website is for losers LOL!", "expected": "Ths wbst s fr lsrs LL!"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "square_digits",
+            "title": "Square Every Digit",
+            "description": "Welcome. In this kata, you are asked to square every digit of a number and concatenate them.",
+            "objective": "For example, if we run 9119 through the function, 811181 will come out, because 9^2 is 81 and 1^2 is 1.",
+            "constraints": "<ul><li>Input is integer</li></ul>",
+            "examples": "<pre>Input: 9119\nOutput: 811181</pre>",
+            "difficulty": "Medium",
+            "function_name": "square_digits",
+            "templates": {
+                "python": "def square_digits(num):\n    # Your code here\n    pass",
+                "javascript": "function square_digits(num) {\n    // Your code here\n}",
+                "php": "function square_digits($num) {\n    // Your code here\n}",
+                "c": "int square_digits(int num) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 9119, "expected": 811181}, {"input": 0, "expected": 0}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "high_and_low",
+            "title": "Highest and Lowest",
+            "description": "In this little assignment you are given a string of space separated numbers, and have to return the highest and lowest number.",
+            "objective": "Return string 'Max Min'.",
+            "constraints": "<ul><li>Output string must be two numbers separated by a single space</li></ul>",
+            "examples": "<pre>Input: '1 2 3 4 5'\nOutput: '5 1'</pre>",
+            "difficulty": "Medium",
+            "function_name": "high_and_low",
+            "templates": {
+                "python": "def high_and_low(numbers):\n    # Your code here\n    pass",
+                "javascript": "function high_and_low(numbers) {\n    // Your code here\n}",
+                "php": "function high_and_low($numbers) {\n    // Your code here\n}",
+                "c": "char* high_and_low(char* numbers) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "1 2 3 4 5", "expected": "5 1"}, {"input": "1 2 -3 4 5", "expected": "5 -3"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "get_middle",
+            "title": "Get the Middle Character",
+            "description": "You are going to be given a word. Your job is to return the middle character of the word.",
+            "objective": "If the word's length is odd, return the middle character. If the word's length is even, return the middle 2 characters.",
+            "constraints": "<ul><li>0 < str < 1000</li></ul>",
+            "examples": "<pre>Input: 'test'\nOutput: 'es'\n\nInput: 'testing'\nOutput: 't'</pre>",
+            "difficulty": "Medium",
+            "function_name": "get_middle",
+            "templates": {
+                "python": "def get_middle(s):\n    # Your code here\n    pass",
+                "javascript": "function get_middle(s) {\n    // Your code here\n}",
+                "php": "function get_middle($s) {\n    // Your code here\n}",
+                "c": "char* get_middle(char* s) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "test", "expected": "es"}, {"input": "testing", "expected": "t"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "mumbling",
+            "title": "Mumbling",
+            "description": "This time no story, no theory. The examples below show you how to write function accum.",
+            "objective": "accum('abcd') -> 'A-Bb-Ccc-Dddd'",
+            "constraints": "<ul><li>Input string a-z, A-Z</li></ul>",
+            "examples": "<pre>Input: 'RqaEzty'\nOutput: 'R-Qq-Aaa-Eeee-Zzzzz-Tttttt-Yyyyyyy'</pre>",
+            "difficulty": "Medium",
+            "function_name": "accum",
+            "templates": {
+                "python": "def accum(s):\n    # Your code here\n    pass",
+                "javascript": "function accum(s) {\n    // Your code here\n}",
+                "php": "function accum($s) {\n    // Your code here\n}",
+                "c": "char* accum(char* s) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "abcd", "expected": "A-Bb-Ccc-Dddd"}, {"input": "RqaEzty", "expected": "R-Qq-Aaa-Eeee-Zzzzz-Tttttt-Yyyyyyy"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "is_square",
+            "title": "You're a square!",
+            "description": "Given an integral number, determine if it's a square number.",
+            "objective": "Return true if n is a square of some integer, false otherwise.",
+            "constraints": "<ul><li>n can be negative (false)</li></ul>",
+            "examples": "<pre>Input: -1\nOutput: false\n\nInput: 25\nOutput: true</pre>",
+            "difficulty": "Medium",
+            "function_name": "is_square",
+            "templates": {
+                "python": "def is_square(n):\n    # Your code here\n    pass",
+                "javascript": "function is_square(n) {\n    // Your code here\n}",
+                "php": "function is_square($n) {\n    // Your code here\n}",
+                "c": "int is_square(int n) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": -1, "expected": False}, {"input": 0, "expected": True}, {"input": 25, "expected": True}, {"input": 26, "expected": False}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "list_filtering",
+            "title": "List Filtering",
+            "description": "In this kata you will create a function that takes a list of non-negative integers and strings and returns a new list with the strings filtered out.",
+            "objective": "Return list of integers only.",
+            "constraints": "<ul><li>Input list contains ints and strings</li></ul>",
+            "examples": "<pre>Input: [1, 2, 'a', 'b']\nOutput: [1, 2]</pre>",
+            "difficulty": "Medium",
+            "function_name": "filter_list",
+            "templates": {
+                "python": "def filter_list(l):\n    # Your code here\n    pass",
+                "javascript": "function filter_list(l) {\n    // Your code here\n}",
+                "php": "function filter_list($l) {\n    // Your code here\n}",
+                "c": "int* filter_list(void** l, int size, int* out_size) {\n    // Your code here (C is tricky here, assume int array input for simplicity or skip C for this specific one)\n    return 0;\n}"
+            },
+            "tests": [{"input": [1, 2, "a", "b"], "expected": [1, 2]}],
+            "types": {"c": {"args": ["void**", "int", "int*"], "return": "int*"}} # C implementation might be complex, maybe skip C for this one in generator logic
+        },
+        {
+            "id_base": "isogram",
+            "title": "Isograms",
+            "description": "An isogram is a word that has no repeating letters, consecutive or non-consecutive.",
+            "objective": "Implement a function that determines whether a string that contains only letters is an isogram.",
+            "constraints": "<ul><li>Assume empty string is an isogram. Ignore case.</li></ul>",
+            "examples": "<pre>Input: 'Dermatoglyphics'\nOutput: true\n\nInput: 'aba'\nOutput: false</pre>",
+            "difficulty": "Medium",
+            "function_name": "is_isogram",
+            "templates": {
+                "python": "def is_isogram(string):\n    # Your code here\n    pass",
+                "javascript": "function is_isogram(string) {\n    // Your code here\n}",
+                "php": "function is_isogram($string) {\n    // Your code here\n}",
+                "c": "int is_isogram(char* string) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": "Dermatoglyphics", "expected": True}, {"input": "aba", "expected": False}, {"input": "moOse", "expected": False}],
+            "types": {"c": {"args": ["char*"], "return": "int"}}
+        },
+        {
+            "id_base": "xo",
+            "title": "Exes and Ohs",
+            "description": "Check to see if a string has the same amount of 'x's and 'o's.",
+            "objective": "Return boolean. Case insensitive.",
+            "constraints": "<ul><li>String can contain any char.</li></ul>",
+            "examples": "<pre>Input: 'ooxx'\nOutput: true\n\nInput: 'xooxx'\nOutput: false</pre>",
+            "difficulty": "Medium",
+            "function_name": "xo",
+            "templates": {
+                "python": "def xo(s):\n    # Your code here\n    pass",
+                "javascript": "function xo(s) {\n    // Your code here\n}",
+                "php": "function xo($s) {\n    // Your code here\n}",
+                "c": "int xo(char* s) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": "ooxx", "expected": True}, {"input": "xooxx", "expected": False}, {"input": "zpzpzpp", "expected": True}],
+            "types": {"c": {"args": ["char*"], "return": "int"}}
+        },
+        {
+            "id_base": "shortest_word",
+            "title": "Shortest Word",
+            "description": "Simple, given a string of words, return the length of the shortest word(s).",
+            "objective": "Return length of shortest word.",
+            "constraints": "<ul><li>String will never be empty</li></ul>",
+            "examples": "<pre>Input: 'bitcoin take over the world'\nOutput: 3</pre>",
+            "difficulty": "Medium",
+            "function_name": "find_short",
+            "templates": {
+                "python": "def find_short(s):\n    # Your code here\n    pass",
+                "javascript": "function find_short(s) {\n    // Your code here\n}",
+                "php": "function find_short($s) {\n    // Your code here\n}",
+                "c": "int find_short(char* s) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": "bitcoin take over the world", "expected": 3}],
+            "types": {"c": {"args": ["char*"], "return": "int"}}
+        },
+        {
+            "id_base": "dna",
+            "title": "Complementary DNA",
+            "description": "In DNA strings, symbols 'A' and 'T' are complements of each other, as 'C' and 'G'.",
+            "objective": "Given a DNA string, return the other side.",
+            "constraints": "<ul><li>Input always valid DNA string</li></ul>",
+            "examples": "<pre>Input: 'ATTGC'\nOutput: 'TAACG'</pre>",
+            "difficulty": "Medium",
+            "function_name": "dna_strand",
+            "templates": {
+                "python": "def dna_strand(dna):\n    # Your code here\n    pass",
+                "javascript": "function dna_strand(dna) {\n    // Your code here\n}",
+                "php": "function dna_strand($dna) {\n    // Your code here\n}",
+                "c": "char* dna_strand(char* dna) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "ATTGC", "expected": "TAACG"}, {"input": "GTAT", "expected": "CATA"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "sum_positive",
+            "title": "Sum of positive",
+            "description": "You get an array of numbers, return the sum of all of the positives ones.",
+            "objective": "Sum only positive numbers.",
+            "constraints": "<ul><li>If nothing to sum, return 0</li></ul>",
+            "examples": "<pre>Input: [1, -4, 7, 12]\nOutput: 20</pre>",
+            "difficulty": "Medium",
+            "function_name": "positive_sum",
+            "templates": {
+                "python": "def positive_sum(arr):\n    # Your code here\n    pass",
+                "javascript": "function positive_sum(arr) {\n    // Your code here\n}",
+                "php": "function positive_sum($arr) {\n    // Your code here\n}",
+                "c": "int positive_sum(int* arr, int size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": [1, -4, 7, 12], "expected": 20}, {"input": [], "expected": 0}],
+            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "jaden_case",
+            "title": "Jaden Casing Strings",
+            "description": "Jaden Smith, the son of Will Smith, is the star of films such as The Karate Kid. Your task is to convert strings to how they would be written by Jaden Smith.",
+            "objective": "Capitalize every word.",
+            "constraints": "<ul><li>Strings are not empty</li></ul>",
+            "examples": "<pre>Input: 'How can mirrors be real'\nOutput: 'How Can Mirrors Be Real'</pre>",
+            "difficulty": "Medium",
+            "function_name": "to_jaden_case",
+            "templates": {
+                "python": "def to_jaden_case(string):\n    # Your code here\n    pass",
+                "javascript": "function to_jaden_case(string) {\n    // Your code here\n}",
+                "php": "function to_jaden_case($string) {\n    // Your code here\n}",
+                "c": "char* to_jaden_case(char* string) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "How can mirrors be real", "expected": "How Can Mirrors Be Real"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "friend_or_foe",
+            "title": "Friend or Foe?",
+            "description": "Make a program that filters a list of strings and returns a list with only your friends name in it.",
+            "objective": "If a name has exactly 4 letters, you can be sure that it has to be a friend of yours! Otherwise, you can be sure he's not...",
+            "constraints": "<ul><li>Keep original order</li></ul>",
+            "examples": "<pre>Input: ['Ryan', 'Kieran', 'Mark']\nOutput: ['Ryan', 'Mark']</pre>",
+            "difficulty": "Medium",
+            "function_name": "friend",
+            "templates": {
+                "python": "def friend(x):\n    # Your code here\n    pass",
+                "javascript": "function friend(x) {\n    // Your code here\n}",
+                "php": "function friend($x) {\n    // Your code here\n}",
+                "c": "char** friend(char** x, int size, int* out_size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": ["Ryan", "Kieran", "Mark"], "expected": ["Ryan", "Mark"]}],
+            "types": {"c": {"args": ["char**", "int", "int*"], "return": "char**"}}
+        },
+
+        # --- HARD (10 unique) ---
+        {
+            "id_base": "multiples_3_5",
+            "title": "Multiples of 3 or 5",
+            "description": "If we list all the natural numbers below 10 that are multiples of 3 or 5, we get 3, 5, 6 and 9. The sum of these multiples is 23.",
+            "objective": "Finish the solution so that it returns the sum of all the multiples of 3 or 5 below the number passed in.",
+            "constraints": "<ul><li>If number is negative, return 0</li></ul>",
+            "examples": "<pre>Input: 10\nOutput: 23</pre>",
+            "difficulty": "Hard",
+            "function_name": "solution",
+            "templates": {
+                "python": "def solution(number):\n    # Your code here\n    pass",
+                "javascript": "function solution(number) {\n    // Your code here\n}",
+                "php": "function solution($number) {\n    // Your code here\n}",
+                "c": "int solution(int number) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 10, "expected": 23}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "who_likes_it",
+            "title": "Who likes it?",
+            "description": "You probably know the 'like' system from Facebook and other pages. People can 'like' blog posts, pictures or other items.",
+            "objective": "Implement the function which takes an array containing the names of people that like an item.",
+            "constraints": "<ul><li>Return display text based on count</li></ul>",
+            "examples": "<pre>Input: []\nOutput: 'no one likes this'\n\nInput: ['Peter']\nOutput: 'Peter likes this'\n\nInput: ['Max', 'John', 'Mark']\nOutput: 'Max, John and Mark like this'</pre>",
+            "difficulty": "Hard",
+            "function_name": "likes",
+            "templates": {
+                "python": "def likes(names):\n    # Your code here\n    pass",
+                "javascript": "function likes(names) {\n    // Your code here\n}",
+                "php": "function likes($names) {\n    // Your code here\n}",
+                "c": "char* likes(char** names, int count) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": [], "expected": "no one likes this"}, {"input": ["Peter"], "expected": "Peter likes this"}, {"input": ["Max", "John", "Mark"], "expected": "Max, John and Mark like this"}],
+            "types": {"c": {"args": ["char**", "int"], "return": "char*"}}
+        },
+        {
+            "id_base": "spin_words",
+            "title": "Stop gninnipS My sdroW!",
+            "description": "Write a function that takes in a string of one or more words, and returns the same string, but with all five or more letter words reversed.",
+            "objective": "Reverse words with length >= 5.",
+            "constraints": "<ul><li>Strings consist of only letters and spaces</li></ul>",
+            "examples": "<pre>Input: 'Hey fellow warriors'\nOutput: 'Hey wollef sroirraw'</pre>",
+            "difficulty": "Hard",
+            "function_name": "spin_words",
+            "templates": {
+                "python": "def spin_words(sentence):\n    # Your code here\n    pass",
+                "javascript": "function spin_words(sentence) {\n    // Your code here\n}",
+                "php": "function spin_words($sentence) {\n    // Your code here\n}",
+                "c": "char* spin_words(char* sentence) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "Hey fellow warriors", "expected": "Hey wollef sroirraw"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "find_odd",
+            "title": "Find the odd int",
+            "description": "Given an array of integers, find the one that appears an odd number of times.",
+            "objective": "There will always be only one integer that appears an odd number of times.",
+            "constraints": "<ul><li>Valid input guaranteed</li></ul>",
+            "examples": "<pre>Input: [1,1,2]\nOutput: 2\n\nInput: [0,1,0,1,0]\nOutput: 0</pre>",
+            "difficulty": "Hard",
+            "function_name": "find_it",
+            "templates": {
+                "python": "def find_it(seq):\n    # Your code here\n    pass",
+                "javascript": "function find_it(seq) {\n    // Your code here\n}",
+                "php": "function find_it($seq) {\n    // Your code here\n}",
+                "c": "int find_it(int* seq, int size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": [1, 1, 2], "expected": 2}, {"input": [0, 1, 0, 1, 0], "expected": 0}],
+            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "array_diff",
+            "title": "Array.diff",
+            "description": "Your goal in this kata is to implement a difference function, which subtracts one list from another and returns the result.",
+            "objective": "Remove all values from list a, which are present in list b.",
+            "constraints": "<ul><li>Keep order</li></ul>",
+            "examples": "<pre>Input: [1,2], [1]\nOutput: [2]</pre>",
+            "difficulty": "Hard",
+            "function_name": "array_diff",
+            "templates": {
+                "python": "def array_diff(a, b):\n    # Your code here\n    pass",
+                "javascript": "function array_diff(a, b) {\n    // Your code here\n}",
+                "php": "function array_diff($a, $b) {\n    // Your code here\n}",
+                "c": "int* array_diff(int* a, int a_size, int* b, int b_size, int* out_size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": [[1, 2], [1]], "expected": [2]}, {"input": [[1, 2, 2, 2, 3], [2]], "expected": [1, 3]}],
+            "types": {"c": {"args": ["int*", "int", "int*", "int", "int*"], "return": "int*"}}
+        },
+        {
+            "id_base": "create_phone_number",
+            "title": "Create Phone Number",
+            "description": "Write a function that accepts an array of 10 integers (between 0 and 9), that returns a string of those numbers in the form of a phone number.",
+            "objective": "Format: (123) 456-7890",
+            "constraints": "<ul><li>Array length 10</li></ul>",
+            "examples": "<pre>Input: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]\nOutput: '(123) 456-7890'</pre>",
+            "difficulty": "Hard",
+            "function_name": "create_phone_number",
+            "templates": {
+                "python": "def create_phone_number(n):\n    # Your code here\n    pass",
+                "javascript": "function create_phone_number(n) {\n    // Your code here\n}",
+                "php": "function create_phone_number($n) {\n    // Your code here\n}",
+                "c": "char* create_phone_number(int* n) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": [1, 2, 3, 4, 5, 6, 7, 8, 9, 0], "expected": "(123) 456-7890"}],
+            "types": {"c": {"args": ["int*"], "return": "char*"}}
+        },
+        {
+            "id_base": "digital_root",
+            "title": "Sum of Digits / Digital Root",
+            "description": "Digital root is the recursive sum of all the digits in a number.",
+            "objective": "Given n, take the sum of the digits of n. If that value has more than one digit, continue reducing in this way until a single-digit number is produced.",
+            "constraints": "<ul><li>n >= 0</li></ul>",
+            "examples": "<pre>Input: 16\nOutput: 7\n\nInput: 942\nOutput: 6</pre>",
+            "difficulty": "Hard",
+            "function_name": "digital_root",
+            "templates": {
+                "python": "def digital_root(n):\n    # Your code here\n    pass",
+                "javascript": "function digital_root(n) {\n    // Your code here\n}",
+                "php": "function digital_root($n) {\n    // Your code here\n}",
+                "c": "int digital_root(int n) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": 16, "expected": 7}, {"input": 942, "expected": 6}],
+            "types": {"c": {"args": ["int"], "return": "int"}}
+        },
+        {
+            "id_base": "duplicate_encoder",
+            "title": "Duplicate Encoder",
+            "description": "The goal of this exercise is to convert a string to a new string where each character in the new string is '(' if that character appears only once in the original string, or ')' if it appears more than once.",
+            "objective": "Ignore capitalization when determining if a character is a duplicate.",
+            "constraints": "<ul><li>Input string</li></ul>",
+            "examples": "<pre>Input: 'din'\nOutput: '((('\n\nInput: 'recede'\nOutput: '()()()'</pre>",
+            "difficulty": "Hard",
+            "function_name": "duplicate_encode",
+            "templates": {
+                "python": "def duplicate_encode(word):\n    # Your code here\n    pass",
+                "javascript": "function duplicate_encode(word) {\n    // Your code here\n}",
+                "php": "function duplicate_encode($word) {\n    // Your code here\n}",
+                "c": "char* duplicate_encode(char* word) {\n    // Your code here\n    return \"\";\n}"
+            },
+            "tests": [{"input": "din", "expected": "((("}, {"input": "recede", "expected": "()()()"}],
+            "types": {"c": {"args": ["char*"], "return": "char*"}}
+        },
+        {
+            "id_base": "parity_outlier",
+            "title": "Find The Parity Outlier",
+            "description": "You are given an array (which will have a length of at least 3, but could be very large) containing integers. The array is either entirely comprised of odd integers or entirely comprised of even integers except for a single integer N.",
+            "objective": "Write a method that takes the array as an argument and returns this 'outlier' N.",
+            "constraints": "<ul><li>Array length >= 3</li></ul>",
+            "examples": "<pre>Input: [2, 4, 0, 100, 4, 11, 2602, 36]\nOutput: 11</pre>",
+            "difficulty": "Hard",
+            "function_name": "find_outlier",
+            "templates": {
+                "python": "def find_outlier(integers):\n    # Your code here\n    pass",
+                "javascript": "function find_outlier(integers) {\n    // Your code here\n}",
+                "php": "function find_outlier($integers) {\n    // Your code here\n}",
+                "c": "int find_outlier(int* integers, int size) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": [2, 4, 0, 100, 4, 11, 2602, 36], "expected": 11}, {"input": [160, 3, 1719, 19, 11, 13, -21], "expected": 160}],
+            "types": {"c": {"args": ["int*", "int"], "return": "int"}}
+        },
+        {
+            "id_base": "counting_duplicates",
+            "title": "Counting Duplicates",
+            "description": "Write a function that will return the count of distinct case-insensitive alphabetic characters and numeric digits that occur more than once in the input string.",
+            "objective": "Count duplicates.",
+            "constraints": "<ul><li>Alphanumeric input</li></ul>",
+            "examples": "<pre>Input: 'abcde'\nOutput: 0\n\nInput: 'aabbcde'\nOutput: 2</pre>",
+            "difficulty": "Hard",
+            "function_name": "duplicate_count",
+            "templates": {
+                "python": "def duplicate_count(text):\n    # Your code here\n    pass",
+                "javascript": "function duplicate_count(text) {\n    // Your code here\n}",
+                "php": "function duplicate_count($text) {\n    // Your code here\n}",
+                "c": "int duplicate_count(char* text) {\n    // Your code here\n    return 0;\n}"
+            },
+            "tests": [{"input": "abcde", "expected": 0}, {"input": "aabbcde", "expected": 2}, {"input": "aabBcde", "expected": 2}],
+            "types": {"c": {"args": ["char*"], "return": "int"}}
+        }
+    ]
+
+    challenges = []
+    
+    # Target Distribution
+    counts = {"Easy": 30, "Medium": 60, "Hard": 30}
+    
+    # Helper to get base topics by difficulty
+    topics_by_diff = {"Easy": [], "Medium": [], "Hard": []}
+    for t in topics:
+        topics_by_diff[t["difficulty"]].append(t)
+        
+    # Generate
+    for diff, count in counts.items():
+        available = topics_by_diff[diff]
+        if not available:
+            available = topics 
+            
+        for i in range(count):
+            base = available[i % len(available)]
+            new_challenge = base.copy()
+            new_challenge["id"] = f"{base['id_base']}_{diff}_{i}"
+            # Add some variation to title to make them look distinct
+            new_challenge["title"] = f"{base['title']} (Var. {i+1})"
+            challenges.append(new_challenge)
+
+    import os
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    assets_path = os.path.join(base_dir, "assets", "challenges.json")
+    
+    # Ensure directory exists
+    os.makedirs(os.path.dirname(assets_path), exist_ok=True)
+
+    with open(assets_path, "w") as f:
+        json.dump(challenges, f, indent=4)
+    
+    print(f"Generated {len(challenges)} challenges.")
+
+if __name__ == "__main__":
+    generate_challenges()
