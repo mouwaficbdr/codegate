@@ -3,9 +3,9 @@ import json
 import psutil
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QTextEdit, QPushButton, QMessageBox, QDialog, 
-                               QComboBox, QListWidget, QListWidgetItem, QTabWidget, QSplitter, QTextBrowser)
+                               QComboBox, QListWidget, QListWidgetItem, QTabWidget, QSplitter, QTextBrowser, QFormLayout)
 from PySide6.QtCore import Qt, Signal, Slot, QRegularExpression, QThread
-from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
+from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont, QIcon
 
 from src.i18n_manager import I18nManager
 from src.code_runner import CodeRunner
@@ -269,8 +269,16 @@ class OverlayWindow(QMainWindow):
         self.lang_selector.currentTextChanged.connect(self.on_language_changed)
         header.addWidget(self.lang_selector)
 
-        self.settings_btn = QPushButton("⚙")
-        self.settings_btn.setFixedWidth(30)
+        self.settings_btn = QPushButton()
+        # Créer l'icône d'engrenage
+        import os
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets", "settings_icon.svg")
+        if os.path.exists(icon_path):
+            self.settings_btn.setIcon(QIcon(icon_path))
+        else:
+            self.settings_btn.setText("⚙")  # Fallback si l'icône n'existe pas
+        self.settings_btn.setFixedSize(32, 32)
+        self.settings_btn.setToolTip("Paramètres")
         self.settings_btn.clicked.connect(self.open_settings)
         header.addWidget(self.settings_btn)
         
