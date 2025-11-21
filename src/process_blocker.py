@@ -30,7 +30,7 @@ class ProcessBlocker:
     def _monitor_loop(self):
         while self.running:
             self._scan_and_block()
-            time.sleep(1.0) # Check every second
+            time.sleep(0.3)  # Check every 0.3 seconds for faster detection
 
     def _scan_and_block(self):
         current_user = os.getlogin()

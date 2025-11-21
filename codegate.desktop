@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=CodeGate
+Comment=Productivity tool that requires coding challenges to unblock apps
+Exec=/home/mouwaficbdr/Code/codegate/run_codegate.sh
+Icon=security-high
+Terminal=false
+Categories=Utility;Security;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true
+Hidden=false
