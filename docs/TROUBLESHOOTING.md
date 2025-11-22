@@ -1,104 +1,115 @@
-# 🔧 Guide de Dépannage - CodeGate
+# 🔧 Troubleshooting Guide - CodeGate
 
-Ce guide vous aide à résoudre les problèmes courants avec CodeGate.
+This guide helps you diagnose and fix common issues with CodeGate.
 
 ---
 
-## 🚫 Problèmes de Démarrage
+## 🚫 Startup Issues
 
-### CodeGate ne démarre pas
+### CodeGate doesn’t start
 
-#### Symptômes
-- Aucune fenêtre ne s'affiche
-- Pas de notification de démarrage
-- Processus absent de `ps aux`
+#### Symptoms
+
+* No window appears
+* No startup notification
+* No process in `ps aux`
 
 #### Solutions
 
-**1. Vérifier les logs**
+**1. Check the logs**
+
 ```bash
 cat ~/.local/share/codegate/logs/codegate.log
 cat ~/.local/share/codegate/logs/errors.log
 ```
 
-**2. Tester le démarrage manuel**
+**2. Try starting it manually**
+
 ```bash
 cd /path/to/codegate
 ./run_codegate.sh
 ```
-Observez les messages d'erreur.
 
-**3. Vérifier l'environnement virtuel**
+Watch the error messages.
+
+**3. Check the virtual environment**
+
 ```bash
 ls -la venv/
-# Si absent ou corrompu :
+# If missing or corrupted:
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**4. Vérifier les permissions**
+**4. Check permissions**
+
 ```bash
 chmod +x run_codegate.sh
-ls -la run_codegate.sh  # Doit afficher -rwxr-xr-x
+ls -la run_codegate.sh  # Should show -rwxr-xr-x
 ```
 
-**5. Dépendances manquantes**
+**5. Missing dependencies**
+
 ```bash
 source venv/bin/activate
 python3 -c "import PySide6, psutil, requests"
-# Si erreur, réinstaller :
+# If error, reinstall:
 pip install --force-reinstall PySide6 psutil requests
 ```
 
-**6. Node.js ou PHP manquant**
-Si les challenges JavaScript ou PHP ne fonctionnent pas :
-```bash
-# Vérifier Node.js
-node --version
-# Si absent :
-sudo apt install nodejs  # Ubuntu/Debian
+**6. Missing Node.js or PHP**
+If JS or PHP challenges don’t work:
 
-# Vérifier PHP
+```bash
+# Check Node.js
+node --version
+# If missing:
+sudo apt install nodejs
+
+# Check PHP
 php --version
-# Si absent :
-sudo apt install php-cli  # Ubuntu/Debian
+# If missing:
+sudo apt install php-cli
 ```
 
 ---
 
-### Watchdog ne démarre pas
+### Watchdog doesn’t start
 
-#### Symptôme
+#### Symptom
+
 ```
 ERROR: Cannot find main.py at /path/to/codegate/src/main.py
 ```
 
 #### Solution
+
 ```bash
-# Vérifier que main.py existe
+# Ensure main.py exists
 ls -la src/main.py
 
-# Vérifier le chemin dans watchdog.py
+# Check the path in watchdog.py
 grep "main_script" src/watchdog.py
 ```
 
 ---
 
-### Erreur "Python version too old"
+### Error: “Python version too old”
 
-#### Symptôme
+#### Symptom
+
 ```
 Python 3.10+ required, but found 3.8.x
 ```
 
 #### Solution
+
 ```bash
-# Ubuntu/Debian
 sudo apt update
 sudo apt install python3.11 python3.11-venv
 
-# Puis recréer le venv
+# Recreate venv
 python3.11 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -106,136 +117,128 @@ pip install -r requirements.txt
 
 ---
 
-## 🔒 Problèmes de Blocage
+## 🔒 Blocking Issues
 
-### Les applications ne se bloquent pas
+### Applications are not blocked
 
-#### Diagnostic
+#### Diagnostics
 
-**1. Vérifier que CodeGate tourne**
+**1. Check that CodeGate is running**
+
 ```bash
 ps aux | grep -e watchdog -e "python.*main.py"
 ```
-Vous devriez voir 2 processus.
 
-**2. Vérifier la configuration**
+You should see 2 processes.
+
+**2. Check the configuration**
+
 ```bash
 cat config.json
 ```
-Vérifiez que `blocked_apps` contient bien vos applications.
 
-**3. Vérifier le nom du processus**
+**3. Check the process name**
+
 ```bash
-# Lancer l'app à bloquer, puis :
-ps aux | grep discord  # Remplacer discord par votre app
+ps aux | grep discord  # Replace with your app
 ```
-Le nom exact du processus peut différer :
-- Discord → `discord` ou `Discord`
-- Chrome → `chrome` pas `google-chrome`
-- VS Code → `code`
 
-**4. Tester manuellement**
+Examples:
+
+* Discord → `discord` or `Discord`
+* Chrome → `chrome`
+* VS Code → `code`
+
+**4. Test manually**
+
 ```bash
-# Dans un terminal avec venv activé
 source venv/bin/activate
 python3 -c "
 from src.process_blocker import ProcessBlocker
 blocker = ProcessBlocker(['discord'])
 blocker.start()
 import time
-time.sleep(30)  # Lancer Discord pendant ce temps
+time.sleep(30)
 "
 ```
 
 #### Solutions
 
-**Problème : Nom de processus incorrect**
-```bash
-# Trouver le bon nom
-ps aux | grep -i nom_app
+**Incorrect process name**
 
-# Mettre à jour config.json
+```bash
+ps aux | grep -i app_name
 nano config.json
-# Modifier blocked_apps avec le nom exact
 ```
 
-**Problème : Permissions**
+**Permission issue**
+
 ```bash
-# CodeGate ne peut bloquer que vos propres processus
-whoami  # Noter votre nom d'utilisateur
-ps aux | grep discord | grep $(whoami)  # L'app doit apparaître
+whoami
+ps aux | grep discord | grep $(whoami)
 ```
 
 ---
 
-### L'application se lance puis se bloque après 1 seconde
+### App opens then gets blocked after 1 second
 
-#### C'est normal !
-CodeGate scanne toutes les 0.3s. Il y a un délai entre le lancement et la détection.
+#### Expected behavior
 
-#### Pour améliorer (avancé)
-Modifier `src/process_blocker.py` ligne 33 :
+CodeGate scans every 0.3s — slight delay is normal.
+
+#### Faster scan (advanced)
+
 ```python
-time.sleep(0.1)  # Au lieu de 0.3
+time.sleep(0.1)
 ```
-*Note : Augmente légèrement l'utilisation CPU*
 
 ---
 
-### CodeGate bloque trop d'applications
-
-#### Symptôme
-Des apps non souhaitées sont bloquées.
+### CodeGate blocks too many apps
 
 #### Cause
-Nom de processus trop générique. Ex: `"code"` bloque VS Code mais aussi tout binaire nommé "code".
+
+Process name too generic (example: `"code"`).
 
 #### Solution
-```bash
-# Être plus spécifique
-# Au lieu de "code", utiliser le chemin complet ou un nom unique
-ps aux | grep code  # Voir tous les processus "code"
 
-# Option 1 : Retirer de blocked_apps
-# Option 2 : Utiliser process_monitor.py avec chemins exacts (avancé)
+Be more specific:
+
+```bash
+ps aux | grep code
 ```
 
 ---
 
-## 💻 Problèmes d'Interface
+## 💻 Interface Issues
 
-### La fenêtre challenge ne s'affiche pas en plein écran
+### Challenge window is not fullscreen
 
-#### Solution pour i3wm
+**i3wm fix**
+
 ```bash
-# Ajouter à ~/.config/i3/config
 for_window [class="Python3"] fullscreen enable
 ```
 
-#### Solution pour autres WM
-Vérifier les paramètres de gestion des fenêtres de votre environnement.
+Other WMs: adjust window settings.
 
 ---
 
-### L'éditeur de code affiche mal les caractères
+### Code editor shows broken characters
 
-#### Solution
 ```bash
-# Installer les polices
 sudo apt install fonts-dejavu fonts-liberation
 fc-cache -fv
 ```
 
 ---
 
-### Les notifications ne s'affichent pas
+### Notifications don’t appear
 
-#### Solution
 ```bash
-# Vérifier notify-send
-notify-send "Test" "Message de test"
+notify-send "Test" "Message test"
 
-# Si erreur, installer
+# If missing:
 sudo apt install libnotify-bin
 
 # GNOME
@@ -247,79 +250,73 @@ sudo apt install plasma-workspace
 
 ---
 
-## ⚡ Problèmes de Performance
+## ⚡ Performance Issues
 
-### CodeGate consomme trop de CPU
+### High CPU usage
 
-#### Diagnostic
+#### Diagnose
+
 ```bash
 top -p $(pgrep -f codegate)
 ```
 
 #### Solutions
 
-**CPU élevé en continu (>5%)**
-```bash
-# Vérifier les logs pour des loops
-tail -f ~/.local/share/codegate/logs/codegate.log
+**Constant high CPU (>5%)**
 
-# Augmenter l'intervalle de scan
+```bash
+tail -f ~/.local/share/codegate/logs/codegate.log
 nano src/process_blocker.py
-# Ligne 33 : time.sleep(0.5)  # Au lieu de 0.3
+# Increase interval:
+time.sleep(0.5)
 ```
 
-**Trop de fichiers ouverts**
+**Too many open files**
+
 ```bash
 lsof -p $(pgrep -f main.py) | wc -l
-# Si > 1000, il y a un leak
 ```
 
 ---
 
-### CodeGate utilise trop de RAM
+### High RAM usage
 
-#### Vérifier
+Check:
+
 ```bash
 ps aux | grep python | grep main.py
-# Colonne RSS = RAM en KB
 ```
 
-#### Normal : 50-100 MB
-#### Problème : > 200 MB
+Normal: 50–100 MB
+Problem: >200 MB
 
-#### Solution
+Solution:
+
 ```bash
-# Nettoyer les logs
 rm ~/.local/share/codegate/logs/*.log.*
-
-# Redémarrez CodeGate
 pkill -f watchdog.py
 ./run_codegate.sh
 ```
 
 ---
 
-## 🗂️ Problèmes de Configuration
+## 🗂️ Configuration Issues
 
-### "Configuration file has been modified!"
+### “Configuration file has been modified!”
 
 #### Cause
-Le checksum SHA256 ne correspond pas. Modification manuelle détectée.
 
-#### Solution intentionnelle
+SHA256 checksum mismatch.
+
+#### Solution (intended)
+
 ```bash
-# Si vous avez modifié volontairement :
 python3 -c "
 from src.config_protector import ConfigProtector
 import json
-
 protector = ConfigProtector('config.json')
-
-# Charger et valider votre config
 with open('config.json') as f:
     config = json.load(f)
-
-# Recalculer le checksum
 protector.save_config(config)
 print('✓ Checksum updated')
 "
@@ -327,27 +324,18 @@ print('✓ Checksum updated')
 
 ---
 
-### Config.json corrompu
+### Corrupted config.json
 
-#### Symptôme
-```
-JSON Decode Error
-```
-
-#### Solution
 ```bash
-# Backup de l'ancien
 mv config.json config.json.broken
-
-# Restaurer depuis backup si existe
 cp config.json.backup config.json
 
-# Ou créer nouveau
+# Or recreate
 cat > config.json << 'EOF'
 {
     "blocked_apps": [],
     "custom_apps": [],
-    "language": "fr",
+    "language": "en",
     "difficulty_mode": "Mixed",
     "first_run": true
 }
@@ -356,19 +344,20 @@ EOF
 
 ---
 
-## 🔄 Problèmes d'Autostart
+## 🔄 Autostart Issues
 
-### CodeGate ne démarre pas au login
+### CodeGate doesn’t start on login
 
-#### Vérifier l'autostart
+Check:
+
 ```bash
 ls -la ~/.config/autostart/codegate.desktop
 cat ~/.config/autostart/codegate.desktop
 ```
 
-#### Solution
+Fix:
+
 ```bash
-# Recréer le fichier
 cat > ~/.config/autostart/codegate.desktop << EOF
 [Desktop Entry]
 Type=Application
@@ -377,156 +366,110 @@ Exec=/path/to/codegate/run_codegate.sh
 Terminal=false
 X-GNOME-Autostart-enabled=true
 EOF
-
-# Remplacer /path/to/codegate par votre chemin réel
 ```
 
-#### Vérifier les logs de session
-```bash
-# GNOME
-journalctl --user -b | grep codegate
+Session logs:
 
-# Consulter les logs de démarrage
+```bash
+journalctl --user -b | grep codegate
 cat ~/.local/share/codegate/logs/launcher.log
 ```
 
 ---
 
-## 🧪 Problèmes de Challenges
+## 🧪 Challenge Issues
 
-### "Module not found" lors de l'exécution du code
+### “Module not found” during execution
 
-#### Python
-L'environnement d'exécution est isolé. Seuls les modules standard sont disponibles.
+Python sandbox only allows standard library.
 
-#### Solution
-Utilisez uniquement la bibliothèque standard :
-- ✅ `math`, `collections`, `itertools`, `functools`
-- ❌ `numpy`, `pandas`, `requests`
+Allowed:
+
+* `math`, `itertools`, `collections`, `functools`
+
+Not allowed:
+
+* `numpy`, `pandas`, `requests`
 
 ---
 
-### Challenges JavaScript ne fonctionnent pas
+### JavaScript challenges don’t work
 
-#### Symptôme
 ```
 ERROR: node: command not found
 ```
 
-#### Solution
-```bash
-# Vérifier Node.js
-node --version
-
-# Si absent, installer
-# Ubuntu/Debian
-sudo apt update && sudo apt install nodejs
-
-# Fedora
-sudo dnf install nodejs
-
-# Arch
-sudo pacman -S nodejs
-
-# Vérifier l'installation
-node --version  # Doit afficher v14.x ou supérieur
-```
+Install Node.js depending on your distro.
 
 ---
 
-### Challenges PHP ne fonctionnent pas
+### PHP challenges don’t work
 
-#### Symptôme
 ```
 ERROR: php: command not found
 ```
 
-#### Solution
-```bash
-# Vérifier PHP
-php --version
-
-# Si absent, installer
-# Ubuntu/Debian
-sudo apt update && sudo apt install php-cli
-
-# Fedora
-sudo dnf install php-cli
-
-# Arch
-sudo pacman -S php
-
-# Vérifier l'installation
-php --version  # Doit afficher 7.4 ou supérieur
-```
+Install `php-cli` depending on your distro.
 
 ---
 
-### Tests échouent mais le code semble correct
+### Tests fail but code looks correct
 
-#### Debug
-Ajoutez des prints :
+Add debug prints:
+
 ```python
-def solution(arr):
-    result = sum(arr)
-    print(f"DEBUG: input={arr}, result={result}")  # Visible dans les logs
-    return result
+print(f"DEBUG: input={arr}, result={result}")
 ```
 
-Consultez ensuite :
+Check:
+
 ```bash
 cat ~/.local/share/codegate/logs/codegate.log | grep DEBUG
 ```
 
 ---
 
-## 🆘 Réinitialisation Complète
-
-### Si rien ne fonctionne
+## 🆘 Full Reset
 
 ```bash
-# 1. Tuer tous les processus
 pkill -9 -f codegate
 pkill -9 -f watchdog
 
-# 2. Sauvegarder la config si importante
 cp config.json ~/config.json.backup
 
-# 3. Nettoyer tout
 rm -rf ~/.local/share/codegate/
 rm ~/.config/autostart/codegate.desktop
 rm config.json .config_checksum config.json.backup
 
-# 4. Réinstaller
 ./install.sh
 ```
 
 ---
 
-## 📞 Obtenir de l'Aide
+## 📞 Get Help
 
-Si ce guide ne résout pas votre problème :
+1. **Check logs first**
 
-1. **Consultez les logs** : Toujours commencer par là
    ```bash
    tail -100 ~/.local/share/codegate/logs/*.log
    ```
 
-2. **Recherchez sur GitHub Issues** :
-   https://github.com/mouwaficbdr/codegate/issues
+2. Check GitHub Issues
 
-3. **Ouvrez une nouvelle issue** avec :
-   - Version de Python (`python3 --version`)
-   - Distribution Linux (`lsb_release -a`)
-   - Logs pertinents
-   - Steps pour reproduire le problème
+3. Open a new issue with:
 
-4. **Mode verbeux** pour diagnostic :
+   * Python version
+   * Linux distro
+   * Logs
+   * Steps to reproduce
+
+4. Verbose mode:
+
    ```bash
-   # Modifier logger.py ligne 24
-   verbose=True  # Force mode verbose
+   # logger.py line 24
+   verbose=True
    ```
 
 ---
 
-**Bon dépannage ! 🔧**
+**Happy debugging! 🔧**
