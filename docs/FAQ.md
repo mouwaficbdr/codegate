@@ -1,23 +1,28 @@
-# ❓ FAQ - Questions Fréquentes
+# ❓ FAQ – Frequently Asked Questions
 
-## Installation et Configuration
+## Installation & Setup
 
-### Q: Quels sont les prérequis système ?
-**R:** 
-- Linux (Ubuntu, Debian, Fedora, Arch, etc.)
-- Python 3.10 ou supérieur
-- **Node.js** (v14+) pour les challenges JavaScript
-- **PHP** (v7.4+) pour les challenges PHP
-- Environnement desktop (GNOME, KDE, XFCE, etc.)
-- 100 MB d'espace disque
+### Q: What are the system requirements?
 
-### Q: Node.js et PHP sont-ils obligatoires ?
-**R:** Non ! Si vous n'avez que Python installé, vous pourrez toujours :
-- Utiliser CodeGate
-- Résoudre les challenges **Python uniquement**
-- Le script `install.sh` détecte automatiquement les langages manquants et propose de les installer
+**A:**
 
-**Pour installer manuellement** :
+* Linux (Ubuntu, Debian, Fedora, Arch, etc.)
+* Python 3.10 or higher
+* **Node.js** (v14+) for JavaScript challenges
+* **PHP** (v7.4+) for PHP challenges
+* Desktop environment (GNOME, KDE, XFCE, etc.)
+* 100 MB of disk space
+
+### Q: Are Node.js and PHP required?
+
+**A:** No! If you only have Python installed, you can still:
+
+* Use CodeGate
+* Solve **Python-only** challenges
+* The `install.sh` script automatically detects missing languages and offers to install them
+
+**Manual installation:**
+
 ```bash
 # Node.js (Ubuntu/Debian)
 sudo apt install nodejs
@@ -26,88 +31,112 @@ sudo apt install nodejs
 sudo apt install php-cli
 ```
 
-### Q: CodeGate fonctionne-t-il sans connexion internet ?
-**R:** Oui ! CodeGate est 100% fonctionnel hors ligne. Tous les 200+ challenges sont embarqués dans `assets/challenges.json`.
+### Q: Does CodeGate work without internet access?
 
-### Q: Puis-je installer CodeGate sans sudo/root ?
-**R:** Oui ! L'installation standard se fait entièrement en espace utilisateur (`~/.local` et `~/.config`). Sudo n'est nécessaire que pour une installation système optionnelle.
+**A:** Yes! CodeGate is fully offline. All 200+ challenges are embedded in `assets/challenges.json`.
 
-### Q: Comment mettre à jour CodeGate ?
-**R:**
+### Q: Can I install CodeGate without sudo/root?
+
+**A:** Yes! The default installation occurs entirely in user space (`~/.local` and `~/.config`).
+Sudo is only needed for an optional system-wide install.
+
+### Q: How do I update CodeGate?
+
+**A:**
+
 ```bash
 cd /path/to/codegate
 git pull origin main
-./install.sh  # Réinstaller avec les nouvelles versions
+./install.sh  # Reinstall with new updates
 ```
 
 ---
 
-## Utilisation
+## Usage
 
-### Q: Comment bloquer une nouvelle application ?
-**R:** 
-1. Cliquez sur l'icône ⚙️ (paramètres) dans l'interface
-2. Onglet "Blocked Apps"
-3. Recherchez l'app ou cliquez sur "+ Ajouter une application"
-4. Cochez l'app et sauvegardez
+### Q: How do I block a new application?
 
-### Q: Quel nom de processus utiliser pour une application ?
-**R:** Utilisez la commande `ps aux | grep nomapp` pour trouver le nom exact. Exemples :
-- Discord → `discord` ou `Discord`
-- VS Code → `code`
-- Google Chrome → `chrome`
-- Firefox → `firefox`
+**A:**
 
-### Q: Puis-je désactiver temporairement CodeGate ?
-**R:** Oui, plusieurs méthodes :
+1. Click the ⚙️ (settings) icon
+2. Open the "Blocked Apps" tab
+3. Search for the app or click "+ Add application"
+4. Check the app and save
+
+### Q: What process name should I use for an app?
+
+**A:** Use `ps aux | grep appname` to find the exact name. Examples:
+
+* Discord → `discord` or `Discord`
+* VS Code → `code`
+* Google Chrome → `chrome`
+* Firefox → `firefox`
+
+### Q: Can I temporarily disable CodeGate?
+
+**A:** Yes, several methods:
+
 ```bash
-# Arrêter le watchdog ET l'app principale
+# Stop both the watchdog AND the main app
 pkill -f watchdog && pkill -f "python.*main.py"
 
-# Désactiver l'autostart (jusqu'au prochain reboot)
+# Disable autostart (until next reboot)
 rm ~/.config/autostart/codegate.desktop
 ```
-Note : Le watchdog relancera CodeGate après ~3 secondes si tué seul.
 
-### Q: Comment changer la difficulté des challenges ?
-**R:**
-1. Paramètres ⚙️ → Onglet "General"
-2. Sélectionnez le niveau : Easy, Medium, Hard, ou Mixed
-3. Sauvegardez
+Note: If you kill only the main app, the watchdog will relaunch it after ~3 seconds.
+
+### Q: How do I change the challenge difficulty?
+
+**A:**
+
+1. Settings ⚙️ → "General"
+2. Choose the level: Easy, Medium, Hard, or Mixed
+3. Save
 
 ---
 
-## Problèmes Courants
+## Common Issues
 
-### Q: CodeGate bloque une app que je n'ai pas configurée
-**R:** Vérifiez votre `config.json`. Assurez-vous que `blocked_apps` ne contient que les apps souhaitées. Il peut y avoir des noms de processus similaires (ex: `code` bloque VS Code mais aussi d'autres binaires nommés "code").
+### Q: CodeGate is blocking an app I didn’t configure
 
-### Q: Une app se lance puis se bloque 1 seconde après
-**R:** C'est normal ! CodeGate détecte l'app toutes les 0.3s. Pour une interception instantanée, l'app doit être lancée après que CodeGate soit actif.
+**A:** Check your `config.json`. Make sure `blocked_apps` contains only what you want.
+Some process names are generic (ex: `code` affects VS Code *and* other binaries named "code").
 
-### Q: Le challenge ne s'affiche pas en plein écran
-**R:** 
-- Vérifiez que votre gestionnaire de fenêtres autorise le fullscreen
-- Certains window managers (i3, awesome) nécessitent une configuration spéciale
-- Essayez mode fenêtré via les paramètres
+### Q: An app launches then gets blocked 1 second later
 
-### Q: Mon code est correct mais le test échoue
-**R:**
-1. Vérifiez la sortie exacte (espaces, types de données)
-2. Lisez attentivement les contraintes du problème
-3. Testez votre code dans un environnement Python/JS/PHP séparé
-4. Consultez les logs : `~/.local/share/codegate/logs/codegate.log`
+**A:** Normal behavior. CodeGate scans every 0.3s.
+For instant interception, the app must launch after CodeGate is running.
+
+### Q: The challenge window doesn’t appear fullscreen
+
+**A:**
+
+* Check your window manager’s fullscreen permissions
+* Some WMs (i3, awesome) need extra config
+* You can switch to windowed mode in settings
+
+### Q: My code is correct but the test fails
+
+**A:**
+
+1. Check exact output (spaces, types, formatting)
+2. Re-read the problem constraints
+3. Test your code separately (Python/JS/PHP)
+4. Check logs: `~/.local/share/codegate/logs/codegate.log`
 
 ---
 
 ## Challenges
 
-### Q: Puis-je ajouter mes propres challenges ?
-**R:** Oui ! Éditez `assets/challenges.json`. Format :
+### Q: Can I add my own challenges?
+
+**A:** Yes! Edit `assets/challenges.json`. Format:
+
 ```json
 {
-    "title": "Mon Challenge",
-    "description": "Description du problème",
+    "title": "My Challenge",
+    "description": "Problem description",
     "difficulty": "Easy",
     "category": "Arrays",
     "templates": {
@@ -123,98 +152,130 @@ Note : Le watchdog relancera CodeGate après ~3 secondes si tué seul.
 }
 ```
 
-### Q: Y a-t-il une limite de temps pour résoudre un challenge ?
-**R:** Non, prenez votre temps ! Mais les applications restent bloquées tant que vous n'avez pas résolu.
+### Q: Is there a time limit to solve a challenge?
 
-### Q: Puis-je choisir le langage de programmation ?
-**R:** Oui ! Le sélecteur en haut à droite de l'interface permet de choisir entre Python, JavaScript et PHP.
+**A:** No. Take your time!
+But the app stays blocked until you succeed.
+
+### Q: Can I choose the programming language?
+
+**A:** Yes! The selector in the top-right lets you switch between Python, JavaScript, and PHP.
 
 ---
 
-## Sécurité et Confidentialité
+## Security & Privacy
 
-### Q: Mon code est-il envoyé quelque part ?
-**R:** Non ! CodeGate fonctionne 100% localement. Aucune connexion réseau n'est effectuée. Le code que vous écrivez reste sur votre machine.
+### Q: Is my code sent anywhere?
 
-### Q: Quelqu'un peut-il contourner CodeGate facilement ?
-**R:** CodeGate dispose de protections :
-- Watchdog qui relance l'app si tuée
-- Protection du fichier config avec checksum
-- Détection de modifications
+**A:** No. CodeGate is fully local.
+No network requests. Your code never leaves your machine.
 
-Mais **ce n'est pas un système de contrôle parental** niveau enterprise. Un utilisateur déterminé avec connaissances techniques peut le contourner (kill -9, éditer le code source, etc.). L'objectif est la **discipline personnelle**, pas le blocage forcé.
+### Q: Can someone easily bypass CodeGate?
 
-### Q: CodeGate peut-il endommager mes applications ?
-**R:** Non. CodeGate utilise `SIGSTOP`/`SIGCONT` qui sont des signaux standards POSIX pour pause/reprise. Aucune modification des fichiers d'application.
+**A:** CodeGate includes protections:
+
+* Watchdog auto-restart
+* Config checksum protection
+* Tampering detection
+
+But **it’s not enterprise parental control**.
+A technical user can bypass it (kill -9, edit source, etc.).
+The goal is **self-discipline**, not enforcement.
+
+### Q: Can CodeGate damage my applications?
+
+**A:** No.
+It uses `SIGSTOP`/`SIGCONT`, standard POSIX pause/resume signals.
+It never modifies application files.
 
 ---
 
 ## Performance
 
-### Q: CodeGate consomme-t-il beaucoup de ressources ?
-**R:**
-- CPU : ~0.1-0.5% en idle (scan toutes les 0.3s)
-- RAM : ~50-80 MB (Python + PySide6)
-- Disque : Logs limités à 5MB avec rotation
+### Q: Does CodeGate use many resources?
 
-### Q: CodeGate ralentit-il le démarrage du système ?
-**R:** Impact minimal. Le démarrage automatique ajoute ~2-3 secondes au login.
+**A:**
+
+* CPU: ~0.1–0.5% idle (scan every 0.3s)
+* RAM: ~50–80 MB (Python + PySide6)
+* Disk: Logs capped at 5MB with rotation
+
+### Q: Does it slow down system startup?
+
+**A:** Minimal impact.
+Autostart adds ~2–3 seconds to login.
 
 ---
 
-## Données et Statistiques
+## Data & Stats
 
-### Q: Où sont stockées mes données ?
-**R:**
-- Configuration : `/path/to/codegate/config.json`
-- Logs : `~/.local/share/codegate/logs/`
-- Statistiques : `~/.local/share/codegate/stats.json`
+### Q: Where is my data stored?
 
-### Q: Comment réinitialiser mes statistiques ?
-**R:**
+**A:**
+
+* Config: `/path/to/codegate/config.json`
+* Logs: `~/.local/share/codegate/logs/`
+* Stats: `~/.local/share/codegate/stats.json`
+
+### Q: How do I reset my stats?
+
+**A:**
+
 ```bash
 rm ~/.local/share/codegate/stats.json
 ```
-Elles seront recréées au prochain lancement.
 
-### Q: Puis-je exporter mes statistiques ?
-**R:** Oui, le fichier `stats.json` est au format JSON lisible. Vous pouvez le copier, le parser, ou créer vos propres graphiques.
+They’ll be recreated at next launch.
+
+### Q: Can I export my stats?
+
+**A:** Yes. `stats.json` is plain JSON.
+You can copy it, parse it, or generate custom graphs.
 
 ---
 
-## Désinstallation
+## Uninstallation
 
-### Q: Comment désinstaller complètement CodeGate ?
-**R:**
+### Q: How do I uninstall CodeGate completely?
+
+**A:**
+
 ```bash
 cd /path/to/codegate
 ./uninstall.sh
 ```
-Le script propose de garder les logs et la config si souhaité.
 
-### Q: Que se passe-t-il si je supprime juste le dossier ?
-**R:** Les apps bloquées resteront fonctionnelles. Mais :
-- L'autostart restera dans `~/.config/autostart/codegate.desktop`
-- Les logs resteront dans `~/.local/share/codegate/`
+The script lets you choose whether to keep logs and config.
 
-Utilisez `uninstall.sh` pour un nettoyage complet.
+### Q: What if I just delete the folder?
 
----
+**A:** Apps will work normally, *but*:
 
-## Autres
+* Autostart entry remains (`~/.config/autostart/codegate.desktop`)
+* Logs remain in `~/.local/share/codegate/`
 
-### Q: CodeGate supporte-t-il Wayland ?
-**R:** Oui ! PySide6 fonctionne sous X11 et Wayland.
-
-### Q: Puis-je utiliser CodeGate avec plusieurs utilisateurs ?
-**R:** Oui, chaque utilisateur Linux a sa propre instance indépendante.
-
-### Q: CodeGate fonctionne-t-il sur serveur (headless) ?
-**R:** Non, CodeGate nécessite un environnement graphique (GUI).
-
-### Q: Où rapporter des bugs ?
-**R:** GitHub Issues : https://github.com/mouwaficbdr/codegate/issues
+Use `uninstall.sh` for a clean removal.
 
 ---
 
-**Des questions ? Consultez aussi `docs/TROUBLESHOOTING.md` ou ouvrez une issue !**
+## Other
+
+### Q: Does CodeGate support Wayland?
+
+**A:** Yes! PySide6 works on both X11 and Wayland.
+
+### Q: Can multiple Linux users use CodeGate?
+
+**A:** Yes, each user has an independent instance.
+
+### Q: Does CodeGate work on a server (headless)?
+
+**A:** No. A graphical environment is required.
+
+### Q: Where do I report bugs?
+
+**A:** GitHub Issues: [https://github.com/mouwaficbdr/codegate/issues](https://github.com/mouwaficbdr/codegate/issues)
+
+---
+
+**More questions? Check `docs/TROUBLESHOOTING.md` or open an issue!**
