@@ -1,138 +1,146 @@
-# ⚡ CodeGate
+# 🚪 CodeGate
 
-**CodeGate** est un outil de productivité Linux innovant qui bloque vos applications distrayantes et vous oblige à résoudre un challenge de code pour y accéder.
+**CodeGate** is an innovative Linux productivity tool that blocks your distracting applications and forces you to solve a coding challenge to access them.
 
-> 🎯 **Objectif** : Améliorer votre discipline personnelle tout en développant vos compétences en programmation.
+> 🎯 **Goal**: Improve your personal discipline while boosting your programming skills.
 
 ![CodeGate Challenge UI](assets/screenshots/challenge_ui.png)
 
 ---
 
-## Fonctionnalités
+## Features
 
-### 🔒 Blocage Intelligent
-- Surveillance continue des applications configurées
-- Blocage instantané via `SIGSTOP` (sans terminer l'app)
-- Détection rapide (0.3s) pour intercepter les lancements
-- Protection anti-contournement avec watchdog
+### 🔒 Smart Blocking
 
-### 💻 Challenges de Code
-- Problèmes algorithmiques variés
-- Support multi-langages : **Python** • **JavaScript** • **PHP**
-- Niveaux de difficulté : Facile, Moyen, Difficile, Mixte
-- 200+ challenges intégrés
-- Éditeur avec coloration syntaxique
+* Continuous monitoring of configured applications
+* Instant blocking via `SIGSTOP` (without killing the app)
+* Fast detection (0.3s) to intercept launches
+* Anti-bypass protection with watchdog
+
+### 💻 Coding Challenges
+
+* Various algorithmic problems
+* Multi-language support: **Python** • **JavaScript** • **PHP**
+* Difficulty levels: Easy, Medium, Hard, Mixed
+* 200+ built-in challenges
+* Editor with syntax highlighting
 
 ![CodeGate Settings](assets/screenshots/main_settings.png)
 
-### 🛡️ Robustesse
-- **Watchdog** : Relance automatique si CodeGate est fermé
-- **Protection config** : Détection de modifications via checksum SHA256
-- **Démarrage auto** : S'active à chaque connexion
-- **Logs détaillés** : Rotation automatique (5MB)
+### 🛡️ Robustness
 
-### 📊 Statistiques
-- Blocages quotidiens et totaux
-- Challenges résolus/échoués
-- Taux de réussite
-- Historique complet
+* **Watchdog**: Automatically restarts if CodeGate is closed
+* **Config protection**: Detects modifications using SHA256 checksums
+* **Auto-start**: Activates on each login
+* **Detailed logs**: Automatic rotation (5MB)
 
-### Interface Moderne
-- Interface graphique PySide6
-- Welcome wizard pour configuration initiale
-- Sélection d'apps avec catégories
-- Notifications système
-- Recherche en temps réel
+### 📊 Statistics
+
+* Daily and total blocks
+* Challenges solved/failed
+* Success rate
+* Full history
+
+### Modern Interface
+
+* PySide6 graphical interface
+* Welcome wizard for initial setup
+* App selection with categories
+* System notifications
+* Real-time search
 
 ---
 
-## 📋 Prérequis
+## 📋 Requirements
 
-- **OS** : Linux (testé sur Ubuntu/Debian)
-- **Python** : 3.10+
-- **Node.js** : Pour les challenges JavaScript (v14+ recommandé)
-- **PHP** : Pour les challenges PHP (v7.4+ recommandé)
-- **Environnement** : Desktop avec gestionnaire de fenêtres
+* **OS**: Linux (tested on Ubuntu/Debian)
+* **Python**: 3.10+
+* **Node.js**: For JavaScript challenges (v14+ recommended)
+* **PHP**: For PHP challenges (v7.4+ recommended)
+* **Environment**: Desktop with window manager
 
-> ℹ️ **Note** : Le script d'installation propose d'installer automatiquement Node.js et PHP s'ils sont absents. Vous pouvez aussi utiliser uniquement Python si vous préférez.
+> ℹ️ **Note**: The installation script can automatically install Node.js and PHP if they’re missing. You can also use only Python if you prefer.
 
 ---
 
 ## 🚀 Installation
 
-### Méthode automatique (recommandée)
+### Automatic method (recommended)
 
 ```bash
-# Cloner le repository
+# Clone the repository
 git clone https://github.com/mouwaficbdr/codegate.git
 cd codegate
 
-# Lancer l'installation
+# Run the installer
 ./install.sh
 ```
 
-Le script va :
-- ✅ Vérifier Python 3.10+
-- ✅ Créer un environnement virtuel
-- ✅ Installer les dépendances
-- ✅ Configurer le démarrage automatique
-- ✅ Créer les dossiers nécessaires
+The script will:
 
-### Installation manuelle
+* ✅ Check Python 3.10+
+* ✅ Create a virtual environment
+* ✅ Install dependencies
+* ✅ Configure auto-start
+* ✅ Create required folders
+
+### Manual installation
 
 ```bash
-# 1. Créer l'environnement virtuel
+# 1. Create the virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# 2. Installer les dépendances
+# 2. Install dependencies
 pip install -r requirements.txt
 
-# 3. Copier le fichier autostart
+# 3. Copy the autostart file
 mkdir -p ~/.config/autostart
 cp codegate.desktop ~/.config/autostart/
 
-# 4. Éditer le chemin dans codegate.desktop
+# 4. Edit the path in codegate.desktop
 nano ~/.config/autostart/codegate.desktop
-# Remplacer /home/mouwaficbdr/Code/codegate par votre chemin
+# Replace /home/mouwaficbdr/Code/codegate with your path
 ```
 
 ---
 
-## Utilisation
+## Usage
 
-### Premier lancement
+### First launch
 
-Au premier démarrage, un wizard de configuration s'affiche pour vous guider :
+On first start, a configuration wizard guides you:
 
 <p align="center">
-  <img src="assets/screenshots/onboarding_apps.png" width="32%" alt="Sélection Apps" />
-  <img src="assets/screenshots/onboarding_difficulty.png" width="32%" alt="Difficulté" />
-  <img src="assets/screenshots/onboarding_done.png" width="32%" alt="Résumé" />
+  <img src="assets/screenshots/onboarding_apps.png" width="32%" alt="App Selection" />
+  <img src="assets/screenshots/onboarding_difficulty.png" width="32%" alt="Difficulty" />
+  <img src="assets/screenshots/onboarding_done.png" width="32%" alt="Summary" />
 </p>
 
-1. **Bienvenue** : Présentation du concept
-2. **Sélection apps** : Choisir les apps à bloquer
-3. **Difficulté** : Niveau des challenges
-4. **Résumé** : Vérification et validation
+1. **Welcome**: Introduction to the concept
+2. **App selection**: Choose apps to block
+3. **Difficulty**: Challenge difficulty
+4. **Summary**: Review and validate
 
-### Utilisation quotidienne
+### Daily usage
 
-1. CodeGate démarre automatiquement au login
-2. Les apps configurées sont surveillées
-3. Si vous lancez une app bloquée :
-   - ⏸️ L'app est mise en pause (SIGSTOP)
-   - 📝 Un challenge s'affiche en plein écran
-   - 💻 Résolvez le challenge
-   - ✅ L'app est débloquée si succès
+1. CodeGate starts automatically at login
+2. Configured apps are monitored
+3. If you launch a blocked app:
 
-### Paramètres
+   * ⏸️ The app is paused (SIGSTOP)
+   * 📝 A full-screen challenge appears
+   * 💻 Solve the challenge
+   * ✅ The app unlocks upon success
 
-Cliquez sur l'icône ⚙️ pour :
-- Modifier les applications bloquées
-- Changer la difficulté
-- Ajouter des apps personnalisées
-- Voir les statistiques
+### Settings
+
+Click the ⚙️ icon to:
+
+* Modify blocked applications
+* Change difficulty
+* Add custom apps
+* View statistics
 
 ---
 
@@ -141,31 +149,31 @@ Cliquez sur l'icône ⚙️ pour :
 ```
 codegate/
 ├── src/
-│   ├── main.py                   # Point d'entrée principal
-│   ├── main_gui.py                # Interface graphique
-│   ├── watchdog.py                # Protection anti-kill
-│   ├── process_blocker.py         # Blocage des processus
-│   ├── process_monitor.py         # Détection avancée
-│   ├── config_protector.py        # Protection configuration
-│   ├── code_runner.py             # Exécution du code utilisateur
-│   ├── challenge_fetcher.py       # Récupération challenges
-│   ├── notification_manager.py    # Notifications système
-│   ├── logger.py                  # Logs centralisés
-│   └── onboarding.py              # Wizard première utilisation
+│   ├── main.py                   # Main entry point
+│   ├── main_gui.py               # Graphical interface
+│   ├── watchdog.py               # Anti-kill protection
+│   ├── process_blocker.py        # Process blocking
+│   ├── process_monitor.py        # Advanced detection
+│   ├── config_protector.py       # Config protection
+│   ├── code_runner.py            # User code execution
+│   ├── challenge_fetcher.py      # Challenge retrieval
+│   ├── notification_manager.py   # System notifications
+│   ├── logger.py                 # Centralized logs
+│   └── onboarding.py             # First-use wizard
 ├── assets/
-│   └── challenges.json            # Base de 200+ challenges
-├── install.sh                     # Script d'installation
-├── uninstall.sh                   # Script de désinstallation
-├── run_codegate.sh                # Launcher watchdog
-├── codegate.desktop               # Fichier autostart
-└── config.json                    # Configuration utilisateur
+│   └── challenges.json           # Database of 200+ challenges
+├── install.sh                    # Installation script
+├── uninstall.sh                  # Uninstallation script
+├── run_codegate.sh               # Watchdog launcher
+├── codegate.desktop              # Autostart file
+└── config.json                   # User configuration
 ```
 
 ---
 
-## 🔧 Configuration avancée
+## 🔧 Advanced configuration
 
-### Fichier `config.json`
+### `config.json` file
 
 ```json
 {
@@ -179,81 +187,84 @@ codegate/
 
 ### Logs
 
-Emplacement : `~/.local/share/codegate/logs/`
-- `codegate.log` : Logs principaux (5MB rotation)
-- `errors.log` : Erreurs uniquement
-- `watchdog.log` : Logs du watchdog
+Location: `~/.local/share/codegate/logs/`
 
-### Statistiques
+* `codegate.log`: Main logs (5MB rotation)
+* `errors.log`: Errors only
+* `watchdog.log`: Watchdog logs
 
-Fichier : `~/.local/share/codegate/stats.json`
+### Statistics
+
+File: `~/.local/share/codegate/stats.json`
 
 ---
 
 ## ❓ FAQ
 
-**Q : CodeGate fonctionne-t-il hors ligne ?**  
-R : Oui ! Tous les challenges sont stockés localement.
+**Q: Does CodeGate work offline?**
+A: Yes! All challenges are stored locally.
 
-**Q : Puis-je désactiver temporairement CodeGate ?**  
-R : Oui, via `pkill -f codegate`. Mais le watchdog le relancera après ~3s.
+**Q: Can I temporarily disable CodeGate?**
+A: Yes, via `pkill -f codegate`. But the watchdog will restart it after ~3s.
 
-**Q : Comment désinstaller complètement ?**  
-R : Exécutez `./uninstall.sh` qui nettoie tout.
+**Q: How to fully uninstall it?**
+A: Run `./uninstall.sh`, which cleans everything.
 
-**Q : Puis-je ajouter mes propres challenges ?**  
-R : Oui, éditez `assets/challenges.json` (voir structure).
+**Q: Can I add my own challenges?**
+A: Yes, edit `assets/challenges.json` (see structure).
 
-**Q : CodeGate nécessite-t-il sudo ?**  
-R : Non pour l'utilisation. Optionnel pour l'installation système.
+**Q: Does CodeGate require sudo?**
+A: No for usage. Optional for system-level installation.
 
 ---
 
-## Dépannage
+## Troubleshooting
 
-### CodeGate ne démarre pas
+### CodeGate doesn’t start
+
 ```bash
-# Vérifier les logs
+# Check logs
 cat ~/.local/share/codegate/logs/codegate.log
 
-# Tester manuellement
+# Test manually
 ./run_codegate.sh
 ```
 
-### Les apps ne se bloquent pas
-1. Vérifier que l'app est dans la liste
-2. Vérifier le nom du processus : `ps aux | grep appname`
-3. Consulter les logs pour les erreurs
+### Apps don’t get blocked
 
-### Erreur "Virtual environment not found"
+1. Check if the app is in the list
+2. Check the process name: `ps aux | grep appname`
+3. Check logs for errors
+
+### “Virtual environment not found” error
+
 ```bash
-# Recréer le venv
+# Recreate venv
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Pour plus d'aide, consultez `docs/TROUBLESHOOTING.md`
+For more help, see `docs/TROUBLESHOOTING.md`.
 
 ---
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont bienvenues ! 
+Contributions are welcome!
 
-1. Fork le projet
-2. Créez une branche (`git checkout -b feature/AmazingFeature`)
+1. Fork the project
+2. Create a branch (`git checkout -b feature/AmazingFeature`)
 3. Commit (`git commit -m 'Add AmazingFeature'`)
 4. Push (`git push origin feature/AmazingFeature`)
-5. Ouvrez une Pull Request
+5. Open a Pull Request
 
 ---
 
-## 📄 Licence
+## 📄 License
 
-MIT License - Voir le fichier `LICENSE` pour les détails. (Si j'ai pensé à le mettre mdr)
+MIT License — See the `LICENSE` file for details. (If I remembered to add it lol)
 
 ---
 
-**Made with ⚡ for focused devs(lol)**
-
+**Made with ⚡ for focused devs (Lol)**
