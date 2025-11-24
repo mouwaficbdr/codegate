@@ -19,7 +19,7 @@ class WelcomePage(QWizardPage):
     
     def __init__(self):
         super().__init__()
-        self.setTitle("Bienvenue dans CodeGate! ⚡")
+        self.setTitle("Bienvenue dans CodeGate! 🛡️")
         
         layout = QVBoxLayout()
         

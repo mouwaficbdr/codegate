@@ -4,7 +4,7 @@ import psutil
 from PySide6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                                QLabel, QTextEdit, QPushButton, QMessageBox, QDialog, 
                                QComboBox, QListWidget, QListWidgetItem, QTabWidget, QSplitter, 
-                               QTextBrowser, QFormLayout, QLineEdit, QInputDialog)
+                               QTextBrowser, QFormLayout, QLineEdit, QInputDialog, QScrollArea)
 from PySide6.QtCore import Qt, Signal, Slot, QRegularExpression, QThread
 from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont, QIcon
 
@@ -143,228 +143,361 @@ class CodeHighlighter(QSyntaxHighlighter):
                 self.setFormat(match.capturedStart(), match.capturedLength(), format)
 
 
-# --- Settings Dialog (Same as before) ---
+# --- Settings Dialog (Modernized) ---
 class SettingsDialog(QDialog):
     def __init__(self, i18n, current_settings, parent=None):
         super().__init__(parent)
         self.i18n = i18n
-        self.settings = current_settings
+        self.settings = current_settings.copy() # Travailler sur une copie
         self.setWindowTitle(self.i18n.get("settings"))
-        self.resize(500, 400)
+        self.resize(800, 600)
         self.init_ui()
 
     def init_ui(self):
-        layout = QVBoxLayout(self)
-        tabs = QTabWidget()
+        # Style global de la fenêtre
+        self.setStyleSheet("""
+            QDialog { background-color: #1e1e1e; color: #d4d4d4; font-family: 'Segoe UI', 'Roboto', sans-serif; }
+            QLabel { font-size: 14px; color: #d4d4d4; }
+            QLabel#Title { font-size: 24px; font-weight: bold; color: #ffffff; margin-bottom: 20px; }
+            QLabel#SectionTitle { font-size: 18px; font-weight: bold; color: #4A9EFF; margin-top: 10px; margin-bottom: 10px; }
+            QPushButton { background-color: #0E639C; border: none; color: white; padding: 8px 16px; border-radius: 4px; font-size: 13px; }
+            QPushButton:hover { background-color: #1177BB; }
+            QPushButton#Secondary { background-color: #3C3C3C; }
+            QPushButton#Secondary:hover { background-color: #4C4C4C; }
+            QPushButton#Danger { background-color: #8B0000; }
+            QPushButton#Danger:hover { background-color: #A00000; }
+            QLineEdit { background-color: #3C3C3C; border: 1px solid #555; color: white; padding: 8px; border-radius: 4px; }
+            QLineEdit:focus { border: 1px solid #0E639C; }
+            QComboBox { background-color: #3C3C3C; border: 1px solid #555; color: white; padding: 5px; border-radius: 4px; min-width: 100px; }
+            QComboBox::drop-down { border: none; }
+            QListWidget { background-color: #252526; border: 1px solid #333; border-radius: 4px; outline: none; }
+            QListWidget::item { padding: 8px; border-bottom: 1px solid #2d2d2d; }
+            QListWidget::item:selected { background-color: #094771; }
+            QListWidget::item:hover { background-color: #2a2d2e; }
+            QScrollArea { border: none; background-color: transparent; }
+            QScrollBar:vertical { border: none; background: #1e1e1e; width: 10px; margin: 0px; }
+            QScrollBar::handle:vertical { background: #424242; min-height: 20px; border-radius: 5px; }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0px; }
+        """)
 
-        # Tab 1: General
-        general_tab = QWidget()
-        form = QFormLayout(general_tab)
+        main_layout = QHBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.setSpacing(0)
+
+        # --- Sidebar ---
+        sidebar = QWidget()
+        sidebar.setFixedWidth(200)
+        sidebar.setStyleSheet("background-color: #252526; border-right: 1px solid #333;")
+        sidebar_layout = QVBoxLayout(sidebar)
+        sidebar_layout.setContentsMargins(0, 0, 0, 0)
+        sidebar_layout.setSpacing(0)
+
+        # Titre Sidebar
+        app_title = QLabel("🛡️ CodeGate")
+        app_title.setAlignment(Qt.AlignCenter)
+        app_title.setStyleSheet("font-size: 18px; font-weight: bold; color: #4A9EFF; padding: 20px;")
+        sidebar_layout.addWidget(app_title)
+
+        # Menu Items
+        self.menu_list = QListWidget()
+        self.menu_list.setStyleSheet("""
+            QListWidget { background-color: transparent; border: none; }
+            QListWidget::item { padding: 15px 20px; font-size: 14px; border-left: 3px solid transparent; }
+            QListWidget::item:selected { background-color: #1e1e1e; border-left: 3px solid #4A9EFF; color: white; }
+            QListWidget::item:hover { background-color: #2a2d2e; }
+        """)
         
+        items = [
+            ("Général", "⚙"),
+            ("Applications Bloquées", "🚫"),
+            ("À propos", "ℹ")
+        ]
+        
+        for text, icon in items:
+            item = QListWidgetItem(f"{icon}  {text}")
+            self.menu_list.addItem(item)
+            
+        self.menu_list.setCurrentRow(0)
+        self.menu_list.currentRowChanged.connect(self.change_page)
+        sidebar_layout.addWidget(self.menu_list)
+        
+        # Version info at bottom
+        version_label = QLabel("v1.0.0")
+        version_label.setAlignment(Qt.AlignCenter)
+        version_label.setStyleSheet("color: #666; padding: 10px;")
+        sidebar_layout.addWidget(version_label)
+
+        main_layout.addWidget(sidebar)
+
+        # --- Content Area ---
+        content_area = QWidget()
+        content_layout = QVBoxLayout(content_area)
+        content_layout.setContentsMargins(30, 30, 30, 30)
+
+        # Stacked Widget pour les pages
+        self.pages = QTabWidget() # On utilise QTabWidget mais on cache les tabs pour faire un stacked widget custom
+        self.pages.tabBar().hide()
+        self.pages.setStyleSheet("QTabWidget::pane { border: none; }")
+        
+        # Page 1: Général
+        self.pages.addTab(self.create_general_page(), "General")
+        
+        # Page 2: Apps Bloquées
+        self.pages.addTab(self.create_apps_page(), "Blocked Apps")
+        
+        # Page 3: À propos
+        self.pages.addTab(self.create_about_page(), "About")
+
+        content_layout.addWidget(self.pages)
+
+        # Footer Buttons
+        buttons_layout = QHBoxLayout()
+        buttons_layout.addStretch()
+        
+        cancel_btn = QPushButton(self.i18n.get("cancel"))
+        cancel_btn.setObjectName("Secondary")
+        cancel_btn.setCursor(Qt.PointingHandCursor)
+        cancel_btn.clicked.connect(self.reject)
+        buttons_layout.addWidget(cancel_btn)
+        
+        save_btn = QPushButton("Enregistrer")
+        save_btn.setCursor(Qt.PointingHandCursor)
+        save_btn.clicked.connect(self.accept)
+        buttons_layout.addWidget(save_btn)
+        
+        content_layout.addLayout(buttons_layout)
+        main_layout.addWidget(content_area)
+
+    def change_page(self, index):
+        self.pages.setCurrentIndex(index)
+
+    def create_general_page(self):
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setAlignment(Qt.AlignTop)
+        
+        title = QLabel("Paramètres Généraux")
+        title.setObjectName("Title")
+        layout.addWidget(title)
+        
+        # Langue
+        layout.addWidget(QLabel("Langue de l'interface", objectName="SectionTitle"))
         self.lang_combo = QComboBox()
         self.lang_combo.addItems(["en", "fr"])
         self.lang_combo.setCurrentText(self.settings.get("language", "en"))
-        form.addRow(self.i18n.get("language"), self.lang_combo)
-
+        layout.addWidget(self.lang_combo)
+        layout.addWidget(QLabel("La langue sera mise à jour au prochain démarrage de l'interface.", styleSheet="color: #888; font-size: 12px;"))
+        
+        layout.addSpacing(20)
+        
+        # Difficulté
+        layout.addWidget(QLabel("Difficulté des Challenges", objectName="SectionTitle"))
         self.diff_combo = QComboBox()
         self.diff_combo.addItems(["Easy", "Medium", "Hard", "Mixed"])
         self.diff_combo.setCurrentText(self.settings.get("difficulty_mode", "Mixed"))
-        form.addRow(self.i18n.get("difficulty"), self.diff_combo)
+        layout.addWidget(self.diff_combo)
         
-        tabs.addTab(general_tab, "General")
+        desc_label = QLabel(
+            "• Easy: Concepts de base\n"
+            "• Medium: Algorithmes simples\n"
+            "• Hard: Algorithmes complexes\n"
+            "• Mixed: Mélange aléatoire (recommandé)"
+        )
+        desc_label.setStyleSheet("color: #888; margin-top: 5px;")
+        layout.addWidget(desc_label)
+        
+        layout.addStretch()
+        return page
 
-        # Tab 2: Blocked Apps
-        apps_tab = QWidget()
-        apps_layout = QVBoxLayout(apps_tab)
+    def create_apps_page(self):
+        page = QWidget()
+        layout = QVBoxLayout(page)
         
-        # Header avec titre et bouton d'ajout
+        title = QLabel("Applications Bloquées")
+        title.setObjectName("Title")
+        layout.addWidget(title)
+        
+        # Header avec recherche et ajout
         header_layout = QHBoxLayout()
-        header_layout.addWidget(QLabel("Sélectionnez les applications à bloquer:"))
-        header_layout.addStretch()
         
-        add_app_btn = QPushButton("+ Ajouter une application")
-        add_app_btn.clicked.connect(self.add_custom_app)
-        header_layout.addWidget(add_app_btn)
-        apps_layout.addLayout(header_layout)
-        
-        # Barre de recherche
         self.search_field = QLineEdit()
         self.search_field.setPlaceholderText("🔍 Rechercher une application...")
         self.search_field.textChanged.connect(self.filter_apps)
-        apps_layout.addWidget(self.search_field)
+        header_layout.addWidget(self.search_field)
         
-        # Liste des applications
+        add_btn = QPushButton("+ Ajouter")
+        add_btn.setToolTip("Ajouter une application personnalisée par nom de processus")
+        add_btn.clicked.connect(self.add_custom_app)
+        header_layout.addWidget(add_btn)
+        
+        layout.addLayout(header_layout)
+        
+        # Liste des apps
         self.apps_list = QListWidget()
-        apps_layout.addWidget(self.apps_list)
+        layout.addWidget(self.apps_list)
         
-        # Stocker les données
+        # Légende
+        legend = QLabel("🟢 = En cours d'exécution  |  ✏️ = Personnalisé")
+        legend.setStyleSheet("color: #888; font-size: 12px;")
+        layout.addWidget(legend)
+        
+        # Initialiser les données
         self.current_blocked = set(self.settings.get("blocked_apps", []))
-        self.custom_apps = set(self.settings.get("custom_apps", []))  # Apps ajoutées manuellement
-        
-        # Peupler la liste
+        self.custom_apps = set(self.settings.get("custom_apps", []))
         self.populate_apps_list()
         
-        tabs.addTab(apps_tab, "Blocked Apps")
+        return page
 
-        layout.addWidget(tabs)
-
-        # Buttons
-        buttons = QHBoxLayout()
-        ok_btn = QPushButton(self.i18n.get("ok"))
-        ok_btn.clicked.connect(self.accept)
-        cancel_btn = QPushButton(self.i18n.get("cancel"))
-        cancel_btn.clicked.connect(self.reject)
-        buttons.addWidget(ok_btn)
-        buttons.addWidget(cancel_btn)
-        layout.addLayout(buttons)
+    def create_about_page(self):
+        page = QWidget()
+        layout = QVBoxLayout(page)
+        layout.setAlignment(Qt.AlignCenter)
+        
+        title = QLabel("🛡️ CodeGate")
+        title.setStyleSheet("font-size: 32px; font-weight: bold; color: #4A9EFF;")
+        layout.addWidget(title)
+        
+        subtitle = QLabel("Productivité par le Code")
+        subtitle.setStyleSheet("font-size: 16px; color: #d4d4d4; margin-bottom: 20px;")
+        layout.addWidget(subtitle)
+        
+        info = QLabel(
+            "Version 1.0.0\n\n"
+            "Développé avec ❤️ pour vous aider à rester concentré.\n"
+            "Chaque distraction est une opportunité d'apprendre."
+        )
+        info.setAlignment(Qt.AlignCenter)
+        layout.addWidget(info)
+        
+        layout.addStretch()
+        
+        github_link = QLabel('<a href="#" style="color: #4A9EFF;">GitHub Repository</a>')
+        github_link.setOpenExternalLinks(True)
+        layout.addWidget(github_link)
+        
+        return page
 
     def populate_apps_list(self):
-        """Peuple la liste des applications avec catégories, processus en cours, et apps personnalisées"""
+        """Peuple la liste des applications"""
         self.apps_list.clear()
         
-        # Obtenir les processus en cours
         running_apps = set()
-        import psutil # Assuming psutil is available or will be imported globally
-        for proc in psutil.process_iter(['name']):
-            try:
-                name = proc.info['name']
-                if name:
-                    running_apps.add(name)
-            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                pass
+        try:
+            for proc in psutil.process_iter(['name']):
+                try:
+                    if proc.info['name']:
+                        running_apps.add(proc.info['name'])
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    pass
+        except Exception:
+            pass # Fallback si psutil échoue
         
-        # Dictionnaire pour suivre les processus déjà ajoutés
         added_processes = set()
         
-        # Ajouter les applications par catégorie
+        # 1. Catégories prédéfinies
         for category, apps in COMMON_APPS.items():
-            # Header de catégorie
-            category_item = QListWidgetItem(f"📁 {category}")
-            category_item.setFlags(Qt.NoItemFlags)  # Non cliquable
-            font = category_item.font()
+            # Header
+            cat_item = QListWidgetItem(f"{category}")
+            cat_item.setFlags(Qt.NoItemFlags)
+            cat_item.setBackground(QColor("#333"))
+            cat_item.setForeground(QColor("#4A9EFF"))
+            font = cat_item.font()
             font.setBold(True)
-            category_item.setFont(font)
-            category_item.setBackground(QColor("#2a2a2a"))
-            self.apps_list.addItem(category_item)
+            cat_item.setFont(font)
+            self.apps_list.addItem(cat_item)
             
-            # Applications de la catégorie
             for display_name, process_name in apps:
-                is_running = process_name in running_apps
-                is_blocked = process_name in self.current_blocked
-                
-                # Texte avec badge si en cours
-                text = f"  {display_name}"
-                if is_running:
-                    text += " 🟢"
-                
-                item = QListWidgetItem(text)
-                item.setData(Qt.UserRole, process_name)  # Stocker le nom du processus
-                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
-                self.apps_list.addItem(item)
-                added_processes.add(process_name)
-        
-        # Ajouter une section pour les apps personnalisées
+                self._add_app_item(display_name, process_name, running_apps, added_processes)
+
+        # 2. Apps personnalisées
         if self.custom_apps:
-            custom_item = QListWidgetItem("📁 Applications personnalisées")
-            custom_item.setFlags(Qt.NoItemFlags)
-            font = custom_item.font()
+            custom_header = QListWidgetItem("Applications Personnalisées")
+            custom_header.setFlags(Qt.NoItemFlags)
+            custom_header.setBackground(QColor("#333"))
+            custom_header.setForeground(QColor("#4A9EFF"))
+            font = custom_header.font()
             font.setBold(True)
-            custom_item.setFont(font)
-            custom_item.setBackground(QColor("#2a2a2a"))
-            self.apps_list.addItem(custom_item)
+            custom_header.setFont(font)
+            self.apps_list.addItem(custom_header)
             
             for process_name in sorted(self.custom_apps):
                 if process_name not in added_processes:
-                    is_running = process_name in running_apps
-                    is_blocked = process_name in self.current_blocked
-                    
-                    text = f"  {process_name} ✏️"
-                    if is_running:
-                        text += " 🟢"
-                    
-                    item = QListWidgetItem(text)
-                    item.setData(Qt.UserRole, process_name)
-                    item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                    item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
-                    self.apps_list.addItem(item)
-                    added_processes.add(process_name)
+                    self._add_app_item(process_name, process_name, running_apps, added_processes, is_custom=True)
+
+        # 3. Autres processus en cours (optionnel, peut-être trop bruyant, on met juste ceux bloqués non listés ailleurs)
+        # Pour l'instant, on n'affiche pas TOUS les processus, seulement ceux déjà bloqués ou dans les listes.
+        # Si l'utilisateur veut bloquer un autre process, il utilise "Ajouter".
         
-        # Ajouter les processus en cours qui ne sont pas encore listés
-        other_running = running_apps - added_processes
-        if other_running:
-            other_item = QListWidgetItem("📁 Autres processus en cours")
-            other_item.setFlags(Qt.NoItemFlags)
-            font = other_item.font()
+        # Vérifier s'il y a des apps bloquées qui ne sont pas encore affichées (cas rare)
+        remaining_blocked = self.current_blocked - added_processes
+        if remaining_blocked:
+            other_header = QListWidgetItem("Autres Bloquées")
+            other_header.setFlags(Qt.NoItemFlags)
+            other_header.setBackground(QColor("#333"))
+            other_header.setForeground(QColor("#4A9EFF"))
+            font = other_header.font()
             font.setBold(True)
-            other_item.setFont(font)
-            other_item.setBackground(QColor("#2a2a2a"))
-            self.apps_list.addItem(other_item)
+            other_header.setFont(font)
+            self.apps_list.addItem(other_header)
             
-            for process_name in sorted(other_running):
-                is_blocked = process_name in self.current_blocked
-                
-                text = f"  {process_name} 🟢"
-                item = QListWidgetItem(text)
-                item.setData(Qt.UserRole, process_name)
-                item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
-                item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
-                self.apps_list.addItem(item)
+            for process_name in remaining_blocked:
+                self._add_app_item(process_name, process_name, running_apps, added_processes)
+
+    def _add_app_item(self, display_name, process_name, running_apps, added_processes, is_custom=False):
+        is_running = process_name in running_apps
+        is_blocked = process_name in self.current_blocked
+        
+        text = f"  {display_name}"
+        if is_custom: text += " ✏️"
+        if is_running: text += " 🟢"
+        
+        item = QListWidgetItem(text)
+        item.setData(Qt.UserRole, process_name)
+        item.setFlags(item.flags() | Qt.ItemIsUserCheckable)
+        item.setCheckState(Qt.Checked if is_blocked else Qt.Unchecked)
+        
+        self.apps_list.addItem(item)
+        added_processes.add(process_name)
 
     def filter_apps(self, search_text):
-        """Filtre la liste des applications selon le texte de recherche"""
         search_text = search_text.lower()
-        
         for i in range(self.apps_list.count()):
             item = self.apps_list.item(i)
-            # Ne pas cacher les headers de catégories
-            if item.flags() == Qt.NoItemFlags:
-                item.setHidden(False)
-            else:
-                # Chercher dans le texte affiché et le nom du processus
+            if item.flags() & Qt.ItemIsUserCheckable:
                 text = item.text().lower()
-                process_name = item.data(Qt.UserRole)
-                if process_name:
-                    process_name = process_name.lower()
-                    should_show = search_text in text or search_text in process_name
-                else:
-                    should_show = search_text in text
-                item.setHidden(not should_show)
+                process = item.data(Qt.UserRole).lower()
+                item.setHidden(search_text not in text and search_text not in process)
+            else:
+                # Headers : on pourrait être plus malin et les cacher si tous leurs enfants sont cachés
+                pass
 
     def add_custom_app(self):
-        """Dialogue pour ajouter manuellement une application"""
-        from PySide6.QtWidgets import QInputDialog # Assuming QInputDialog is available or will be imported globally
         process_name, ok = QInputDialog.getText(
-            self,
-            "Ajouter une application",
-            "Entrez le nom du processus à bloquer:\n(ex: firefox, chrome, discord)"
+            self, "Ajouter une application", 
+            "Nom du processus (ex: notepad.exe, vlc):"
         )
-        
         if ok and process_name:
             process_name = process_name.strip()
             if process_name:
-                # Ajouter aux apps personnalisées
                 self.custom_apps.add(process_name)
-                # Bloquer par défaut
-                self.current_blocked.add(process_name)
-                # Rafraîchir la liste
+                self.current_blocked.add(process_name) # On le bloque par défaut quand on l'ajoute
                 self.populate_apps_list()
+                # Scroll to bottom to see it (ou vers la section custom)
+                self.apps_list.scrollToBottom()
 
     def get_settings(self):
-        blocked_apps = []
+        # Récupérer l'état des cases à cocher
+        blocked = []
         for i in range(self.apps_list.count()):
             item = self.apps_list.item(i)
-            # Ignorer les headers de catégories
-            if item.flags() != Qt.NoItemFlags and item.checkState() == Qt.Checked:
-                process_name = item.data(Qt.UserRole)
-                if process_name:
-                    blocked_apps.append(process_name)
+            if item.flags() & Qt.ItemIsUserCheckable and item.checkState() == Qt.Checked:
+                blocked.append(item.data(Qt.UserRole))
         
         return {
             "language": self.lang_combo.currentText(),
             "difficulty_mode": self.diff_combo.currentText(),
-            "blocked_apps": blocked_apps,
-            "custom_apps": list(self.custom_apps)  # Sauvegarder les apps personnalisées
+            "blocked_apps": blocked,
+            "custom_apps": list(self.custom_apps)
         }
 
 # --- Worker Thread for Tests ---
@@ -434,7 +567,7 @@ class OverlayWindow(QMainWindow):
         header.setContentsMargins(10, 10, 10, 10)
         
         # Titre CodeGate stylisé
-        title_label = QLabel("⚡ CodeGate")
+        title_label = QLabel("🛡️ CodeGate")
         title_font = title_label.font()
         title_font.setPointSize(18)
         title_font.setBold(True)
@@ -568,6 +701,8 @@ class OverlayWindow(QMainWindow):
 
     def refresh_ui_text(self):
         pass 
+        # TODO: Implémenter le rafraîchissement des textes de l'UI si la langue change
+        # Pour l'instant, seul le contenu dynamique change.
 
     def load_new_challenge(self):
         self.current_challenge = self.challenge_fetcher.get_random_challenge()

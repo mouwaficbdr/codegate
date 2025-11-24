@@ -11,6 +11,7 @@ from src.config_protector import ConfigProtector
 from src.logger import get_logger
 from src.notification_manager import NotificationManager
 from src.onboarding import OnboardingWizard
+from src.tray_icon import CodeGateTray
 
 
 class SignalBridge(QObject):
@@ -19,6 +20,9 @@ class SignalBridge(QObject):
 
 def main():
     app = QApplication(sys.argv)
+    
+    # Important pour le mode Tray : ne pas quitter quand la dernière fenêtre est fermée
+    app.setQuitOnLastWindowClosed(False)
     
     # Initialize logger (verbose mode can be enabled here)
     logger = get_logger("CodeGate", verbose=False)
@@ -85,6 +89,11 @@ def main():
     window = OverlayWindow(fetcher, initial_settings=config)
     logger.info("GUI initialized")
     
+    # System Tray Setup
+    tray = CodeGateTray()
+    tray.show()
+    logger.info("System Tray initialized")
+
     # Wiring
     def on_block_detected():
         """Callback quand une app est bloquée"""
@@ -118,12 +127,21 @@ def main():
             "timestamp": str(notifier.stats.get("last_reset")),
             "total_solved": notifier.stats.get("challenges_solved", 0)
         })
-        # Notification sera gérée dans main_gui.py si besoin
     
+    def quit_app():
+        """Quitter proprement l'application"""
+        logger.info("Quit requested from tray")
+        blocker.stop()
+        app.quit()
+
     # Connect signals
     bridge.request_overlay.connect(window.showFullScreen)
     window.unblock_signal.connect(blocker.unblock_all)
     window.settings_changed.connect(on_settings_changed)
+    
+    # Tray signals
+    tray.request_settings.connect(window.open_settings)
+    tray.request_quit.connect(quit_app)
     
     # Start Blocker
     blocker.on_block_callback = on_block_detected 
