@@ -2,13 +2,22 @@ from PySide6.QtWidgets import QSystemTrayIcon, QMenu
 from PySide6.QtGui import QIcon, QAction
 from PySide6.QtCore import Signal, QObject
 import os
+from src.i18n_manager import I18nManager
 
 class CodeGateTray(QSystemTrayIcon):
     request_settings = Signal()
     request_quit = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, lang="en"):
         super().__init__(parent)
+        self.i18n = I18nManager(lang)
+        self.init_ui()
+
+    def set_language(self, lang):
+        """Mettre à jour la langue et recréer le menu"""
+        self.i18n.set_language(lang)
+        self.setToolTip(self.i18n.get("tray_tooltip"))
+        # Re-créer le menu pour mettre à jour les textes
         self.init_ui()
 
     def init_ui(self):
@@ -39,16 +48,16 @@ class CodeGateTray(QSystemTrayIcon):
         """)
 
         # Action Paramètres
-        settings_action = QAction("⚙ Paramètres", self)
+        settings_action = QAction(self.i18n.get("settings"), self)
         settings_action.triggered.connect(self.request_settings.emit)
         menu.addAction(settings_action)
 
         menu.addSeparator()
 
         # Action Quitter
-        quit_action = QAction("❌ Quitter CodeGate", self)
+        quit_action = QAction(self.i18n.get("quit"), self)
         quit_action.triggered.connect(self.request_quit.emit)
         menu.addAction(quit_action)
 
         self.setContextMenu(menu)
-        self.setToolTip("CodeGate - Productivité & Focus")
+        self.setToolTip(self.i18n.get("tray_tooltip"))

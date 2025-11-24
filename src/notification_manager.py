@@ -9,19 +9,25 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 import json
+from src.i18n_manager import I18nManager
 
 
 class NotificationManager:
     """Gestionnaire de notifications système via notify-send"""
     
-    def __init__(self, app_name="CodeGate"):
+    def __init__(self, app_name="CodeGate", lang="en"):
         self.app_name = app_name
+        self.i18n = I18nManager(lang)
         self.stats_file = Path.home() / ".local" / "share" / "codegate" / "stats.json"
         self.stats_file.parent.mkdir(parents=True, exist_ok=True)
         
         # Charger les stats
         self.stats = self._load_stats()
     
+    def set_language(self, lang):
+        """Mettre à jour la langue"""
+        self.i18n.set_language(lang)
+
     def _load_stats(self) -> dict:
         """Charger les statistiques depuis le fichier"""
         if self.stats_file.exists():
@@ -87,8 +93,8 @@ class NotificationManager:
         self._save_stats()
         
         self.send(
-            "Application bloquée! 🔒",
-            f"{app_name} a été bloquée.\nRésolvez le challenge pour continuer.",
+            self.i18n.get("notif_blocked_title"),
+            self.i18n.get("notif_blocked_msg", app_name=app_name),
             urgency="critical",
             icon="dialog-warning"
         )
@@ -98,11 +104,11 @@ class NotificationManager:
         self.stats["challenges_solved"] += 1
         self._save_stats()
         
-        time_msg = f" en {time_taken}s" if time_taken else ""
+        time_msg = self.i18n.get("notif_time_msg", time_taken=time_taken) if time_taken else ""
         
         self.send(
-            "Challenge résolu! ✅",
-            f"Bravo! Challenge {language} résolu{time_msg}.\nVous avez accès à vos applications.",
+            self.i18n.get("notif_solved_title"),
+            self.i18n.get("notif_solved_msg", language=language, time_msg=time_msg),
             urgency="normal",
             icon="emblem-default"
         )
@@ -113,8 +119,8 @@ class NotificationManager:
         self._save_stats()
         
         self.send(
-            "Challenge échoué ❌",
-            "Réessayez pour débloquer vos applications.",
+            self.i18n.get("notif_failed_title"),
+            self.i18n.get("notif_failed_msg"),
             urgency="normal",
             icon="dialog-error"
         )
@@ -122,8 +128,8 @@ class NotificationManager:
     def notify_startup(self):
         """Notification au démarrage de CodeGate"""
         self.send(
-            "CodeGate actif",
-            "La surveillance des applications est activée.",
+            self.i18n.get("notif_startup_title"),
+            self.i18n.get("notif_startup_msg"),
             urgency="low",
             icon="security-high"
         )
@@ -133,20 +139,20 @@ class NotificationManager:
         self._reset_daily_stats()
         
         message = (
-            f"📊 Blocages aujourd'hui: {self.stats['blocks_today']}\n"
-            f"🔒 Total blocages: {self.stats['total_blocks']}\n"
-            f"✅ Challenges résolus: {self.stats['challenges_solved']}\n"
-            f"❌ Challenges échoués: {self.stats['challenges_failed']}"
+            f"{self.i18n.get('notif_stats_blocks_today', count=self.stats['blocks_today'])}\n"
+            f"{self.i18n.get('notif_stats_total_blocks', count=self.stats['total_blocks'])}\n"
+            f"{self.i18n.get('notif_stats_solved', count=self.stats['challenges_solved'])}\n"
+            f"{self.i18n.get('notif_stats_failed', count=self.stats['challenges_failed'])}"
         )
         
         success_rate = 0
         total_challenges = self.stats['challenges_solved'] + self.stats['challenges_failed']
         if total_challenges > 0:
             success_rate = (self.stats['challenges_solved'] / total_challenges) * 100
-            message += f"\n📈 Taux de réussite: {success_rate:.1f}%"
+            message += f"\n{self.i18n.get('notif_stats_rate', rate=success_rate)}"
         
         self.send(
-            "Statistiques CodeGate",
+            self.i18n.get("notif_stats_title"),
             message,
             urgency="low",
             icon="dialog-information"
@@ -160,7 +166,7 @@ class NotificationManager:
 
 # Test du module
 if __name__ == "__main__":
-    nm = NotificationManager()
+    nm = NotificationManager(lang="en")
     
     print("Testing notifications...")
     

@@ -13,7 +13,7 @@ from src.code_runner import CodeRunner
 
 # Applications populaires par catégorie
 COMMON_APPS = {
-    "Navigateurs": [
+    "cat_browsers": [
         ("Firefox", "firefox"),
         ("Google Chrome", "chrome"),
         ("Chromium", "chromium-browser"),
@@ -21,7 +21,7 @@ COMMON_APPS = {
         ("Opera", "opera"),
         ("Microsoft Edge", "microsoft-edge"),
     ],
-    "Communication": [
+    "cat_communication": [
         ("Discord", "discord"),
         ("Slack", "slack"),
         ("Telegram", "telegram-desktop"),
@@ -29,14 +29,14 @@ COMMON_APPS = {
         ("Thunderbird", "thunderbird"),
         ("Evolution", "evolution"),
     ],
-    "Jeux & Divertissement": [
+    "cat_games": [
         ("Steam", "steam"),
         ("Spotify", "spotify"),
         ("VLC", "vlc"),
         ("Rhythmbox", "rhythmbox"),
         ("GIMP", "gimp"),
     ],
-    "Développement": [
+    "cat_dev": [
         ("VS Code", "code"),
         ("PyCharm", "pycharm"),
         ("IntelliJ IDEA", "idea"),
@@ -208,9 +208,9 @@ class SettingsDialog(QDialog):
         """)
         
         items = [
-            ("Général", "⚙"),
-            ("Applications Bloquées", "🚫"),
-            ("À propos", "ℹ")
+            (self.i18n.get("general"), "⚙"),
+            (self.i18n.get("blocked_apps"), "🚫"),
+            (self.i18n.get("about"), "ℹ")
         ]
         
         for text, icon in items:
@@ -260,7 +260,7 @@ class SettingsDialog(QDialog):
         cancel_btn.clicked.connect(self.reject)
         buttons_layout.addWidget(cancel_btn)
         
-        save_btn = QPushButton("Enregistrer")
+        save_btn = QPushButton(self.i18n.get("save"))
         save_btn.setCursor(Qt.PointingHandCursor)
         save_btn.clicked.connect(self.accept)
         buttons_layout.addWidget(save_btn)
@@ -276,32 +276,32 @@ class SettingsDialog(QDialog):
         layout = QVBoxLayout(page)
         layout.setAlignment(Qt.AlignTop)
         
-        title = QLabel("Paramètres Généraux")
+        title = QLabel(self.i18n.get("settings_title"))
         title.setObjectName("Title")
         layout.addWidget(title)
         
         # Langue
-        layout.addWidget(QLabel("Langue de l'interface", objectName="SectionTitle"))
+        layout.addWidget(QLabel(self.i18n.get("language"), objectName="SectionTitle"))
         self.lang_combo = QComboBox()
         self.lang_combo.addItems(["en", "fr"])
         self.lang_combo.setCurrentText(self.settings.get("language", "en"))
         layout.addWidget(self.lang_combo)
-        layout.addWidget(QLabel("La langue sera mise à jour au prochain démarrage de l'interface.", styleSheet="color: #888; font-size: 12px;"))
+        layout.addWidget(QLabel(self.i18n.get("language_hint"), styleSheet="color: #888; font-size: 12px;"))
         
         layout.addSpacing(20)
         
         # Difficulté
-        layout.addWidget(QLabel("Difficulté des Challenges", objectName="SectionTitle"))
+        layout.addWidget(QLabel(self.i18n.get("difficulty"), objectName="SectionTitle"))
         self.diff_combo = QComboBox()
         self.diff_combo.addItems(["Easy", "Medium", "Hard", "Mixed"])
         self.diff_combo.setCurrentText(self.settings.get("difficulty_mode", "Mixed"))
         layout.addWidget(self.diff_combo)
         
         desc_label = QLabel(
-            "• Easy: Concepts de base\n"
-            "• Medium: Algorithmes simples\n"
-            "• Hard: Algorithmes complexes\n"
-            "• Mixed: Mélange aléatoire (recommandé)"
+            f"{self.i18n.get('diff_easy_desc')}\n"
+            f"{self.i18n.get('diff_medium_desc')}\n"
+            f"{self.i18n.get('diff_hard_desc')}\n"
+            f"{self.i18n.get('diff_mixed_desc')}"
         )
         desc_label.setStyleSheet("color: #888; margin-top: 5px;")
         layout.addWidget(desc_label)
@@ -313,7 +313,7 @@ class SettingsDialog(QDialog):
         page = QWidget()
         layout = QVBoxLayout(page)
         
-        title = QLabel("Applications Bloquées")
+        title = QLabel(self.i18n.get("blocked_apps"))
         title.setObjectName("Title")
         layout.addWidget(title)
         
@@ -321,12 +321,12 @@ class SettingsDialog(QDialog):
         header_layout = QHBoxLayout()
         
         self.search_field = QLineEdit()
-        self.search_field.setPlaceholderText("🔍 Rechercher une application...")
+        self.search_field.setPlaceholderText(self.i18n.get("search_placeholder"))
         self.search_field.textChanged.connect(self.filter_apps)
         header_layout.addWidget(self.search_field)
         
-        add_btn = QPushButton("+ Ajouter")
-        add_btn.setToolTip("Ajouter une application personnalisée par nom de processus")
+        add_btn = QPushButton(self.i18n.get("add_btn"))
+        add_btn.setToolTip(self.i18n.get("add_tooltip"))
         add_btn.clicked.connect(self.add_custom_app)
         header_layout.addWidget(add_btn)
         
@@ -337,7 +337,7 @@ class SettingsDialog(QDialog):
         layout.addWidget(self.apps_list)
         
         # Légende
-        legend = QLabel("🟢 = En cours d'exécution  |  ✏️ = Personnalisé")
+        legend = QLabel(self.i18n.get("legend"))
         legend.setStyleSheet("color: #888; font-size: 12px;")
         layout.addWidget(legend)
         
@@ -357,15 +357,11 @@ class SettingsDialog(QDialog):
         title.setStyleSheet("font-size: 32px; font-weight: bold; color: #4A9EFF;")
         layout.addWidget(title)
         
-        subtitle = QLabel("Productivité par le Code")
+        subtitle = QLabel(self.i18n.get("about_subtitle"))
         subtitle.setStyleSheet("font-size: 16px; color: #d4d4d4; margin-bottom: 20px;")
         layout.addWidget(subtitle)
         
-        info = QLabel(
-            "Version 1.0.0\n\n"
-            "Développé avec ❤️ pour vous aider à rester concentré.\n"
-            "Chaque distraction est une opportunité d'apprendre."
-        )
+        info = QLabel(self.i18n.get("about_desc"))
         info.setAlignment(Qt.AlignCenter)
         layout.addWidget(info)
         
@@ -395,9 +391,9 @@ class SettingsDialog(QDialog):
         added_processes = set()
         
         # 1. Catégories prédéfinies
-        for category, apps in COMMON_APPS.items():
+        for category_key, apps in COMMON_APPS.items():
             # Header
-            cat_item = QListWidgetItem(f"{category}")
+            cat_item = QListWidgetItem(self.i18n.get(category_key))
             cat_item.setFlags(Qt.NoItemFlags)
             cat_item.setBackground(QColor("#333"))
             cat_item.setForeground(QColor("#4A9EFF"))
@@ -411,7 +407,7 @@ class SettingsDialog(QDialog):
 
         # 2. Apps personnalisées
         if self.custom_apps:
-            custom_header = QListWidgetItem("Applications Personnalisées")
+            custom_header = QListWidgetItem(self.i18n.get("custom_apps"))
             custom_header.setFlags(Qt.NoItemFlags)
             custom_header.setBackground(QColor("#333"))
             custom_header.setForeground(QColor("#4A9EFF"))
@@ -431,7 +427,7 @@ class SettingsDialog(QDialog):
         # Vérifier s'il y a des apps bloquées qui ne sont pas encore affichées (cas rare)
         remaining_blocked = self.current_blocked - added_processes
         if remaining_blocked:
-            other_header = QListWidgetItem("Autres Bloquées")
+            other_header = QListWidgetItem(self.i18n.get("other_blocked"))
             other_header.setFlags(Qt.NoItemFlags)
             other_header.setBackground(QColor("#333"))
             other_header.setForeground(QColor("#4A9EFF"))
@@ -473,8 +469,8 @@ class SettingsDialog(QDialog):
 
     def add_custom_app(self):
         process_name, ok = QInputDialog.getText(
-            self, "Ajouter une application", 
-            "Nom du processus (ex: notepad.exe, vlc):"
+            self, self.i18n.get("add_custom_title"), 
+            self.i18n.get("add_custom_msg")
         )
         if ok and process_name:
             process_name = process_name.strip()
@@ -591,7 +587,7 @@ class OverlayWindow(QMainWindow):
         else:
             self.settings_btn.setText("⚙")  # Fallback si l'icône n'existe pas
         self.settings_btn.setFixedSize(32, 32)
-        self.settings_btn.setToolTip("Paramètres")
+        self.settings_btn.setToolTip(self.i18n.get("settings"))
         self.settings_btn.clicked.connect(self.open_settings)
         header.addWidget(self.settings_btn)
         
@@ -633,7 +629,7 @@ class OverlayWindow(QMainWindow):
         editor_widget = QWidget()
         editor_layout = QVBoxLayout(editor_widget)
         editor_layout.setContentsMargins(0, 0, 0, 0)
-        editor_label = QLabel("Solution:")
+        editor_label = QLabel(self.i18n.get("solution_label"))
         editor_label.setStyleSheet("background-color: #252526; padding: 5px; font-weight: bold;")
         editor_layout.addWidget(editor_label)
         
@@ -649,7 +645,7 @@ class OverlayWindow(QMainWindow):
         console_layout.setContentsMargins(0, 0, 0, 0)
         
         console_header = QHBoxLayout()
-        console_label = QLabel("Test Output:")
+        console_label = QLabel(self.i18n.get("test_output_label"))
         console_label.setStyleSheet("background-color: #252526; padding: 5px; font-weight: bold;")
         console_header.addWidget(console_label)
         console_header.addStretch()
@@ -664,14 +660,14 @@ class OverlayWindow(QMainWindow):
         btn_layout = QHBoxLayout()
         btn_layout.setContentsMargins(10, 10, 10, 10)
         
-        self.run_btn = QPushButton("Run Sample Tests")
+        self.run_btn = QPushButton(self.i18n.get("run_tests_btn"))
         self.run_btn.setObjectName("Secondary")
         self.run_btn.clicked.connect(self.run_sample_tests)
         btn_layout.addWidget(self.run_btn)
         
         btn_layout.addStretch()
         
-        self.submit_btn = QPushButton("Attempt")
+        self.submit_btn = QPushButton(self.i18n.get("attempt_btn"))
         self.submit_btn.clicked.connect(self.attempt_solution)
         btn_layout.addWidget(self.submit_btn)
         
@@ -738,7 +734,7 @@ class OverlayWindow(QMainWindow):
             self.on_language_changed(self.lang_selector.currentText())
             self.console_output.clear()
         else:
-            self.desc_browser.setText("No challenges loaded.")
+            self.desc_browser.setText(self.i18n.get("no_challenges"))
 
     def on_language_changed(self, lang):
         if not self.current_challenge:
@@ -765,7 +761,7 @@ class OverlayWindow(QMainWindow):
         # UI State: Running
         self.run_btn.setEnabled(False)
         self.submit_btn.setEnabled(False)
-        self.console_output.setHtml("<p style='color: #DCDCAA;'>Running tests...</p>")
+        self.console_output.setHtml(f"<p style='color: #DCDCAA;'>{self.i18n.get('running_tests')}</p>")
         
         user_code = self.code_editor.toPlainText()
         func_name = self.current_challenge.get("function_name", "solution")
@@ -790,40 +786,25 @@ class OverlayWindow(QMainWindow):
         html_output = ""
         
         if error:
-            html_output += f"<h4 style='color: #F44336;'>Execution Error:</h4><pre style='color: #F44336;'>{error}</pre>"
+            html_output += f"<h4 style='color: #F44336;'>{self.i18n.get('execution_error')}</h4><pre style='color: #F44336;'>{error}</pre>"
         else:
             passed_count = sum(1 for r in results if r['passed'])
             total_count = len(results)
             
             color = "#4CAF50" if success else "#F44336"
-            html_output += f"<h4 style='color: {color};'>Result: {passed_count}/{total_count} Passed</h4>"
+            html_output += f"<h4 style='color: {color};'>{self.i18n.get('result_passed', passed=passed_count, total=total_count)}</h4>"
             
             for i, r in enumerate(results):
                 status_color = "#4CAF50" if r['passed'] else "#F44336"
-                status_icon = "✔" if r['passed'] else "✘"
-                
-                html_output += f"<div style='margin-bottom: 10px; border-left: 3px solid {status_color}; padding-left: 10px;'>"
-                html_output += f"<div style='color: {status_color}; font-weight: bold;'>Test {i+1}: {status_icon}</div>"
-                html_output += f"<div>Input: <span style='color: #9CDCFE;'>{r['input']}</span></div>"
-                
-                if not r['passed']:
-                     html_output += f"<div>Expected: <span style='color: #CE9178;'>{r['expected']}</span></div>"
-                     html_output += f"<div>Actual: <span style='color: #F44336;'>{r['actual']}</span></div>"
-                     if r.get('log'):
-                         html_output += f"<pre style='color: #888; font-size: 12px;'>{r['log']}</pre>"
-                html_output += "</div>"
+                status_icon = "✓" if r['passed'] else "✗"
+                html_output += f"<div style='color: {status_color}; margin-top: 5px;'>{status_icon} Test {i+1}: "
+                if r['passed']:
+                    html_output += "Passed</div>"
+                else:
+                    html_output += f"Failed <br>&nbsp;&nbsp;Expected: {r['expected']}<br>&nbsp;&nbsp;Got: {r['actual']}</div>"
 
         self.console_output.setHtml(html_output)
-
+        
         if success and unlock_on_success:
-             QMessageBox.information(self, "Success", "All tests passed! Unlocking...")
-             self.unblock_signal.emit()
-             self.close()
-
-if __name__ == "__main__":
-    from challenge_fetcher import ChallengeFetcher
-    app = QApplication(sys.argv)
-    fetcher = ChallengeFetcher(local_path="../assets/challenges.json")
-    window = OverlayWindow(fetcher)
-    window.show()
-    sys.exit(app.exec())
+            self.unblock_signal.emit()
+            self.close()

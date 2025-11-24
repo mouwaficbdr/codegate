@@ -29,9 +29,6 @@ def main():
     logger.info("="*50)
     logger.info("CodeGate starting...")
     
-    # Initialize notification manager
-    notifier = NotificationManager()
-    
     # Configuration avec protection
     config_path = "config.json"
     protector = ConfigProtector(config_path)
@@ -40,7 +37,7 @@ def main():
     default_config = {
         "blocked_apps": [],
         "custom_apps": [],
-        "language": "fr",
+        "language": "en", # Default to English
         "difficulty_mode": "Mixed",
         "first_run": True
     }
@@ -53,11 +50,15 @@ def main():
         logger.error(f"Failed to load config: {e}")
         config = default_config
         protector.save_config(config)
+
+    # Initialize notification manager with configured language
+    notifier = NotificationManager(lang=config.get("language", "en"))
     
     # --- FIRST RUN: Onboarding Wizard ---
     if config.get("first_run", True):
         logger.info("First run detected, showing onboarding wizard...")
-        wizard = OnboardingWizard()
+        # Pass the language to the wizard (defaulting to 'en' if not set)
+        wizard = OnboardingWizard(lang=config.get("language", "en"))
         
         if wizard.exec() == OnboardingWizard.DialogCode.Accepted:
             # Récupérer la configuration du wizard
@@ -66,6 +67,10 @@ def main():
             
             # Sauvegarder avec protection
             protector.save_config(config)
+            
+            # Update notifier language if it changed during onboarding
+            notifier.set_language(config.get("language", "en"))
+            
             logger.info(f"Onboarding completed. Blocked apps: {config['blocked_apps']}")
         else:
             logger.warning("Onboarding cancelled by user")
@@ -90,7 +95,7 @@ def main():
     logger.info("GUI initialized")
     
     # System Tray Setup
-    tray = CodeGateTray()
+    tray = CodeGateTray(lang=config.get("language", "en"))
     tray.show()
     logger.info("System Tray initialized")
 
@@ -118,6 +123,11 @@ def main():
         # Update Blocker
         all_apps = new_settings.get("blocked_apps", []) + new_settings.get("custom_apps", [])
         blocker.update_blocked_apps(all_apps)
+        
+        # Update Language
+        lang = new_settings.get("language", "en")
+        tray.set_language(lang)
+        notifier.set_language(lang)
         
         logger.info(f"Updated blocked apps: {all_apps}")
     

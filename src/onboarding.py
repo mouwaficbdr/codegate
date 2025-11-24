@@ -12,35 +12,37 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QFont
 import psutil
 import os
+from src.i18n_manager import I18nManager
 
 
 class WelcomePage(QWizardPage):
     """Page d'accueil du wizard"""
     
-    def __init__(self):
+    def __init__(self, i18n):
         super().__init__()
-        self.setTitle("Bienvenue dans CodeGate! 🛡️")
+        self.i18n = i18n
+        self.setTitle(self.i18n.get("welcome_title"))
         
         layout = QVBoxLayout()
         
         # Message de bienvenue
         welcome_text = QLabel(
-            "<h2>CodeGate - Productivité par le Code</h2>"
-            "<p>CodeGate est un outil de productivité unique qui vous aide à rester concentré.</p>"
+            f"{self.i18n.get('welcome_subtitle')}"
+            f"{self.i18n.get('welcome_intro')}"
             "<br>"
-            "<p><b>Comment ça marche?</b></p>"
+            f"{self.i18n.get('how_it_works')}"
             "<ol>"
-            "<li>Vous sélectionnez les applications qui vous distraient</li>"
-            "<li>Quand vous essayez de les ouvrir, elles sont <b>bloquées</b></li>"
-            "<li>Vous devez <b>résoudre un challenge de code</b> pour y accéder</li>"
-            "<li>Une fois résolu, vous avez accès jusqu'à la prochaine tentative</li>"
+            f"{self.i18n.get('step_1')}"
+            f"{self.i18n.get('step_2')}"
+            f"{self.i18n.get('step_3')}"
+            f"{self.i18n.get('step_4')}"
             "</ol>"
             "<br>"
-            "<p>📚 <b>Bénéfices:</b></p>"
+            f"{self.i18n.get('benefits_title')}"
             "<ul>"
-            "<li>✅ Amélioration de vos compétences en programmation</li>"
-            "<li>✅ Réduction des distractions</li>"
-            "<li>✅ Discipline personnelle renforcée</li>"
+            f"{self.i18n.get('benefit_1')}"
+            f"{self.i18n.get('benefit_2')}"
+            f"{self.i18n.get('benefit_3')}"
             "</ul>"
         )
         welcome_text.setWordWrap(True)
@@ -53,18 +55,16 @@ class WelcomePage(QWizardPage):
 class AppSelectionPage(QWizardPage):
     """Page de sélection des applications à bloquer"""
     
-    def __init__(self):
+    def __init__(self, i18n):
         super().__init__()
-        self.setTitle("Sélection des Applications")
-        self.setSubTitle("Choisissez les applications que vous voulez bloquer")
+        self.i18n = i18n
+        self.setTitle(self.i18n.get("app_selection_title"))
+        self.setSubTitle(self.i18n.get("app_selection_subtitle"))
         
         layout = QVBoxLayout()
         
         # Instructions
-        instructions = QLabel(
-            "Sélectionnez les applications que vous trouvez <b>distrayantes</b> "
-            "et pour lesquelles vous devrez résoudre un challenge avant d'y accéder."
-        )
+        instructions = QLabel(self.i18n.get("app_selection_instr"))
         instructions.setWordWrap(True)
         layout.addWidget(instructions)
         
@@ -73,16 +73,16 @@ class AppSelectionPage(QWizardPage):
         
         # Applications courantes
         common_apps = {
-            "Navigateurs": ["firefox", "chrome", "chromium", "brave"],
-            "Communication": ["discord", "slack", "telegram", "signal"],
-            "Jeux & Divertissement": ["steam", "spotify"],
-            "Réseaux Sociaux": ["whatsapp", "thunderbird"]
+            "cat_browsers": ["firefox", "chrome", "chromium", "brave"],
+            "cat_communication": ["discord", "slack", "telegram", "signal"],
+            "cat_games": ["steam", "spotify"],
+            "cat_social": ["whatsapp", "thunderbird"]
         }
         
         # Ajouter par catégorie
-        for category, apps in common_apps.items():
+        for category_key, apps in common_apps.items():
             # Header de catégorie
-            header_item = QListWidgetItem(f"📁 {category}")
+            header_item = QListWidgetItem(f"📁 {self.i18n.get(category_key)}")
             header_item.setFlags(Qt.NoItemFlags)
             font = header_item.font()
             font.setBold(True)
@@ -105,9 +105,7 @@ class AppSelectionPage(QWizardPage):
         layout.addWidget(self.app_list)
         
         # Suggestion
-        suggestion = QLabel(
-            "💡 <i>Conseil: Commencez avec 2-3 applications pour tester le système.</i>"
-        )
+        suggestion = QLabel(self.i18n.get("app_selection_tip"))
         suggestion.setWordWrap(True)
         layout.addWidget(suggestion)
         
@@ -139,24 +137,23 @@ class AppSelectionPage(QWizardPage):
 class DifficultyPage(QWizardPage):
     """Page de sélection de la difficulté"""
     
-    def __init__(self):
+    def __init__(self, i18n):
         super().__init__()
-        self.setTitle("Niveau de Difficulté")
-        self.setSubTitle("Choisissez le niveau de vos challenges")
+        self.i18n = i18n
+        self.setTitle(self.i18n.get("diff_title"))
+        self.setSubTitle(self.i18n.get("diff_subtitle"))
         
         layout = QVBoxLayout()
         
-        explanation = QLabel(
-            "Les challenges varient en difficulté. Vous pouvez changer ce paramètre à tout moment."
-        )
+        explanation = QLabel(self.i18n.get("diff_expl"))
         explanation.setWordWrap(True)
         layout.addWidget(explanation)
         
         # Options de difficulté
-        self.easy_cb = QCheckBox("✅ Facile - Problèmes simples (début)")
-        self.medium_cb = QCheckBox("🔸 Moyen - Challenges intermédiaires")
-        self.hard_cb = QCheckBox("🔥 Difficile - Algorithmes avancés")
-        self.mixed_cb = QCheckBox("🎲 Mixte - Tous les niveaux (recommandé)")
+        self.easy_cb = QCheckBox(self.i18n.get("diff_easy"))
+        self.medium_cb = QCheckBox(self.i18n.get("diff_medium"))
+        self.hard_cb = QCheckBox(self.i18n.get("diff_hard"))
+        self.mixed_cb = QCheckBox(self.i18n.get("diff_mixed"))
         
         self.mixed_cb.setChecked(True)  # Par défaut
         
@@ -183,10 +180,11 @@ class DifficultyPage(QWizardPage):
 class FinalPage(QWizardPage):
     """Page finale avec résumé"""
     
-    def __init__(self, parent_wizard):
+    def __init__(self, parent_wizard, i18n):
         super().__init__()
         self.wizard = parent_wizard
-        self.setTitle("Configuration Terminée! 🎉")
+        self.i18n = i18n
+        self.setTitle(self.i18n.get("final_title"))
         
         layout = QVBoxLayout()
         
@@ -198,20 +196,14 @@ class FinalPage(QWizardPage):
         
         # Auto-start info
         autostart_info = QLabel(
-            "<p><b>⚙️ Démarrage automatique:</b><br>"
-            "CodeGate démarrera automatiquement à chaque connexion pour surveiller vos applications.</p>"
-            "<p><b>🔧 Paramètres:</b><br>"
-            "Vous pouvez modifier vos préférences à tout moment via le bouton ⚙ dans l'interface principale.</p>"
+            f"{self.i18n.get('final_autostart')}"
+            f"{self.i18n.get('final_settings')}"
         )
         autostart_info.setWordWrap(True)
         layout.addWidget(autostart_info)
         
         # Message final
-        final_msg = QLabel(
-            "<hr>"
-            "<h3>Prêt à booster votre productivité? 🚀</h3>"
-            "<p>Cliquez sur <b>Terminer</b> pour commencer!</p>"
-        )
+        final_msg = QLabel(self.i18n.get("final_msg"))
         final_msg.setWordWrap(True)
         layout.addWidget(final_msg)
         
@@ -226,12 +218,12 @@ class FinalPage(QWizardPage):
         selected_apps = app_page.get_selected_apps()
         difficulty = diff_page.get_difficulty()
         
-        apps_text = "<br>".join([f"  • {app}" for app in selected_apps]) if selected_apps else "  <i>Aucune application</i>"
+        apps_text = "<br>".join([f"  • {app}" for app in selected_apps]) if selected_apps else f"  {self.i18n.get('no_apps')}"
         
         summary = (
-            f"<p><b>📱 Applications bloquées ({len(selected_apps)}):</b><br>"
+            f"<p>{self.i18n.get('final_summary_apps', count=len(selected_apps))}<br>"
             f"{apps_text}</p>"
-            f"<p><b>🎯 Difficulté:</b> {difficulty}</p>"
+            f"<p>{self.i18n.get('final_summary_diff', diff=difficulty)}</p>"
         )
         
         self.summary_label.setText(summary)
@@ -240,33 +232,34 @@ class FinalPage(QWizardPage):
 class OnboardingWizard(QWizard):
     """Wizard complet d'onboarding"""
     
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, lang="en"):
         super().__init__(parent)
+        self.i18n = I18nManager(lang)
         
-        self.setWindowTitle("CodeGate - Configuration Initiale")
+        self.setWindowTitle(self.i18n.get("wizard_title"))
         self.setWizardStyle(QWizard.ModernStyle)
         self.setFixedSize(700, 500)
         
         # Ajouter les pages
-        self.addPage(WelcomePage())
-        self.app_page = AppSelectionPage()
+        self.addPage(WelcomePage(self.i18n))
+        self.app_page = AppSelectionPage(self.i18n)
         self.addPage(self.app_page)
-        self.diff_page = DifficultyPage()
+        self.diff_page = DifficultyPage(self.i18n)
         self.addPage(self.diff_page)
-        self.addPage(FinalPage(self))
+        self.addPage(FinalPage(self, self.i18n))
         
         # Textes des boutons
-        self.setButtonText(QWizard.NextButton, "Suivant →")
-        self.setButtonText(QWizard.BackButton, "← Retour")
-        self.setButtonText(QWizard.FinishButton, "Terminer")
-        self.setButtonText(QWizard.CancelButton, "Annuler")
+        self.setButtonText(QWizard.NextButton, self.i18n.get("wizard_next"))
+        self.setButtonText(QWizard.BackButton, self.i18n.get("wizard_back"))
+        self.setButtonText(QWizard.FinishButton, self.i18n.get("wizard_finish"))
+        self.setButtonText(QWizard.CancelButton, self.i18n.get("wizard_cancel"))
     
     def get_configuration(self):
         """Obtenir la configuration finale"""
         return {
             "blocked_apps": self.app_page.get_selected_apps(),
             "difficulty_mode": self.diff_page.get_difficulty(),
-            "language": "fr",
+            "language": self.i18n.lang, # Garder la langue actuelle
             "first_run": False,
             "custom_apps": []
         }
@@ -278,7 +271,8 @@ if __name__ == "__main__":
     import sys
     
     app = QApplication(sys.argv)
-    wizard = OnboardingWizard()
+    # On peut tester en français en passant lang="fr"
+    wizard = OnboardingWizard(lang="en")
     
     if wizard.exec() == QWizard.Accepted:
         config = wizard.get_configuration()
