@@ -1,4 +1,4 @@
-# 🚪 CodeGate
+# CodeGate
 
 **CodeGate** is an innovative Linux productivity tool that blocks your distracting applications and forces you to solve a coding challenge to access them.
 
