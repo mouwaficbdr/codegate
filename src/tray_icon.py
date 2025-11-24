@@ -33,17 +33,25 @@ class CodeGateTray(QSystemTrayIcon):
         menu = QMenu()
         
         # Style du menu (tentative de dark mode, dépend du système)
+        # Style du menu (tentative de dark mode, dépend du système)
         menu.setStyleSheet("""
             QMenu {
-                background-color: #252526;
-                color: #d4d4d4;
-                border: 1px solid #333;
+                background-color: #18181b;
+                color: #e4e4e7;
+                border: 1px solid #3f3f46;
+                font-family: 'Segoe UI', 'Roboto', sans-serif;
             }
             QMenu::item {
-                padding: 5px 20px;
+                padding: 8px 24px;
             }
             QMenu::item:selected {
-                background-color: #094771;
+                background-color: #3b82f6;
+                color: white;
+            }
+            QMenu::separator {
+                height: 1px;
+                background: #3f3f46;
+                margin: 4px 0px;
             }
         """)
 

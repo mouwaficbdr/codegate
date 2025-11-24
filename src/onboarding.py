@@ -240,6 +240,63 @@ class OnboardingWizard(QWizard):
         self.setWizardStyle(QWizard.ModernStyle)
         self.setFixedSize(700, 500)
         
+        # Style global
+        self.setStyleSheet("""
+            QWizard, QWizardPage { 
+                background-color: #18181b; 
+                color: #e4e4e7; 
+                font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif; 
+            }
+            QLabel { 
+                font-size: 14px; 
+                color: #e4e4e7; 
+            }
+            QListWidget { 
+                background-color: #27272a; 
+                border: 1px solid #3f3f46; 
+                border-radius: 6px; 
+                outline: none; 
+            }
+            QListWidget::item { 
+                padding: 8px; 
+                color: #e4e4e7;
+            }
+            QListWidget::item:selected { 
+                background-color: #3b82f6; 
+                color: white; 
+            }
+            QCheckBox {
+                color: #e4e4e7;
+                spacing: 8px;
+                font-size: 14px;
+            }
+            QCheckBox::indicator {
+                width: 18px;
+                height: 18px;
+                border: 1px solid #3f3f46;
+                border-radius: 4px;
+                background: #27272a;
+            }
+            QCheckBox::indicator:checked {
+                background: #3b82f6;
+                border-color: #3b82f6;
+            }
+            QPushButton { 
+                background-color: #3b82f6; 
+                border: none; 
+                color: white; 
+                padding: 8px 16px; 
+                border-radius: 6px; 
+                font-weight: 600;
+            }
+            QPushButton:hover { 
+                background-color: #2563eb; 
+            }
+            QPushButton:pressed {
+                background-color: #1d4ed8;
+            }
+        """)
+        
         # Ajouter les pages
         self.addPage(WelcomePage(self.i18n))
         self.app_page = AppSelectionPage(self.i18n)
