@@ -78,3 +78,10 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+
+# CodeGate Specific
+verify_flow.sh
+stats.json
+*.sock
+.installed
+
