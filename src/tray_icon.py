@@ -69,3 +69,13 @@ class CodeGateTray(QSystemTrayIcon):
 
         self.setContextMenu(menu)
         self.setToolTip(self.i18n.get("tray_tooltip"))
+        
+        # Connecter le signal activated pour gérer le clic gauche
+        self.activated.connect(self.on_activated)
+
+    def on_activated(self, reason):
+        if reason == QSystemTrayIcon.Trigger:
+            # Sur un clic gauche (Trigger), on peut soit ouvrir le menu, soit ouvrir les paramètres
+            # Ici, on choisit d'ouvrir le menu contextuel pour être cohérent
+            self.contextMenu().popup(self.geometry().center())
+

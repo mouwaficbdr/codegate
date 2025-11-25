@@ -1,0 +1,75 @@
+#!/bin/bash
+# CodeGate CLI - Contrôle du daemon CodeGate
+# Usage: codegate {open|config|quit|status}
+
+set -e
+
+# Déterminer le chemin du socket
+SOCKET_DIR="${XDG_RUNTIME_DIR:-$HOME/.cache/codegate}"
+SOCKET_PATH="$SOCKET_DIR/codegate.sock"
+
+# Fonction pour envoyer une commande au daemon
+send_command() {
+    local command="$1"
+    
+    if [ ! -S "$SOCKET_PATH" ]; then
+        echo "❌ Erreur: CodeGate n'est pas en cours d'exécution"
+        echo "💡 Démarrez-le avec: $HOME/.local/share/codegate/run_codegate.sh"
+        exit 1
+    fi
+    
+    # Envoyer la commande et afficher la réponse
+    response=$(echo "$command" | nc -U "$SOCKET_PATH" 2>/dev/null || echo '{"status":"error","message":"Connection failed"}')
+    
+    # Parser la réponse JSON (simple)
+    if echo "$response" | grep -q '"status":"ok"'; then
+        echo "✓ Commande exécutée avec succès"
+        echo "$response" | grep -oP '"message":"\K[^"]+' || true
+    else
+        echo "❌ Erreur lors de l'exécution"
+        echo "$response" | grep -oP '"message":"\K[^"]+' || echo "$response"
+        exit 1
+    fi
+}
+
+# Parser les arguments
+case "${1:-}" in
+    open|config|dashboard)
+        send_command "SHOW_DASHBOARD"
+        ;;
+    quit|stop)
+        send_command "QUIT"
+        ;;
+    status)
+        send_command "STATUS"
+        ;;
+    help|--help|-h)
+        cat << EOF
+CodeGate CLI - Contrôle du daemon CodeGate
+
+Usage: codegate <commande>
+
+Commandes disponibles:
+  open, config, dashboard    Ouvrir le tableau de bord
+  quit, stop                 Arrêter CodeGate
+  status                     Afficher le statut
+  help                       Afficher cette aide
+
+Exemples:
+  codegate open              # Ouvrir le dashboard
+  codegate status            # Vérifier si CodeGate tourne
+  codegate quit              # Arrêter CodeGate
+
+EOF
+        ;;
+    "")
+        echo "❌ Erreur: Aucune commande spécifiée"
+        echo "💡 Utilisez 'codegate help' pour voir les commandes disponibles"
+        exit 1
+        ;;
+    *)
+        echo "❌ Erreur: Commande inconnue '$1'"
+        echo "💡 Utilisez 'codegate help' pour voir les commandes disponibles"
+        exit 1
+        ;;
+esac

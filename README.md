@@ -124,6 +124,30 @@ On first start, a configuration wizard guides you:
 
 ### Daily usage
 
+CodeGate runs in the background and can be controlled in multiple ways:
+
+#### Via CLI (Recommended)
+
+```bash
+# Open the dashboard
+codegate open
+
+# Check if CodeGate is running
+codegate status
+
+# Quit CodeGate
+codegate quit
+```
+
+#### Via System Tray
+
+Look for the 🛡️ CodeGate icon in your system tray (usually near the clock):
+- **Click** to open the menu
+- Select **Settings** to configure apps
+- Select **Quit** to stop CodeGate
+
+#### When an app is blocked
+
 1. CodeGate starts automatically at login
 2. Configured apps are monitored
 3. If you launch a blocked app:
@@ -133,14 +157,29 @@ On first start, a configuration wizard guides you:
    * 💻 Solve the challenge
    * ✅ The app unlocks upon success
 
+### CLI Commands
+
+| Command | Action |
+|---------|--------|
+| `codegate open` | Open the dashboard window |
+| `codegate config` | Alias for `open` |
+| `codegate dashboard` | Alias for `open` |
+| `codegate status` | Check if CodeGate is running |
+| `codegate quit` | Stop CodeGate daemon |
+| `codegate help` | Show help |
+
 ### Settings
 
-Click the ⚙️ icon to:
+Access settings via:
+- **CLI**: `codegate open`
+- **Tray Icon**: Click the ⚙️ icon
 
+You can:
 * Modify blocked applications
 * Change difficulty
 * Add custom apps
 * View statistics
+
 
 ---
 
@@ -150,7 +189,9 @@ Click the ⚙️ icon to:
 codegate/
 ├── src/
 │   ├── main.py                   # Main entry point
-│   ├── main_gui.py               # Graphical interface
+│   ├── main_gui.py               # Challenge overlay interface
+│   ├── dashboard.py              # Dashboard window (settings)
+│   ├── ipc_server.py             # CLI communication server
 │   ├── watchdog.py               # Anti-kill protection
 │   ├── process_blocker.py        # Process blocking
 │   ├── process_monitor.py        # Advanced detection
@@ -158,16 +199,22 @@ codegate/
 │   ├── code_runner.py            # User code execution
 │   ├── challenge_fetcher.py      # Challenge retrieval
 │   ├── notification_manager.py   # System notifications
+│   ├── tray_icon.py              # System tray icon
 │   ├── logger.py                 # Centralized logs
-│   └── onboarding.py             # First-use wizard
+│   ├── onboarding.py             # First-use wizard
+│   └── i18n_manager.py           # Internationalization
+├── bin/
+│   └── codegate                  # CLI script
 ├── assets/
-│   └── challenges.json           # Database of 200+ challenges
+│   ├── challenges.json           # Database of 200+ challenges
+│   └── codegate_icon.svg         # App icon
 ├── install.sh                    # Installation script
 ├── uninstall.sh                  # Uninstallation script
 ├── run_codegate.sh               # Watchdog launcher
 ├── codegate.desktop              # Autostart file
 └── config.json                   # User configuration
 ```
+
 
 ---
 
@@ -205,7 +252,7 @@ File: `~/.local/share/codegate/stats.json`
 A: Yes! All challenges are stored locally.
 
 **Q: Can I temporarily disable CodeGate?**
-A: Yes, via `pkill -f codegate`. But the watchdog will restart it after ~3s.
+A: Yes, use `codegate quit` or click "Quit" in the system tray. The watchdog will NOT restart it automatically when quit properly.
 
 **Q: How to fully uninstall it?**
 A: Run `./uninstall.sh`, which cleans everything.

@@ -80,8 +80,9 @@ class CodeGateWatchdog:
     def _start_child(self):
         """Démarrer le processus CodeGate"""
         try:
-            # Obtenir le chemin du venv Python
-            venv_python = Path(self.target_script).parent.parent / "venv" / "bin" / "python3"
+            # Obtenir le chemin du venv Python et le répertoire du projet
+            project_root = Path(self.target_script).parent.parent
+            venv_python = project_root / "venv" / "bin" / "python3"
             
             if venv_python.exists():
                 python_cmd = str(venv_python)
@@ -89,11 +90,16 @@ class CodeGateWatchdog:
                 # Fallback sur python3 système
                 python_cmd = sys.executable
             
-            self._log(f"Starting CodeGate: {python_cmd} {self.target_script}")
+            self._log(f"Starting CodeGate: {python_cmd} -m src.main")
             
-            # Démarrer en arrière-plan
+            # Démarrer en arrière-plan avec le bon PYTHONPATH
+            env = os.environ.copy()
+            env['PYTHONPATH'] = str(project_root)
+            
             self.child_process = subprocess.Popen(
-                [python_cmd, self.target_script],
+                [python_cmd, "-m", "src.main"],
+                cwd=str(project_root),  # Lancer depuis la racine du projet
+                env=env,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 start_new_session=True  # Créer un nouveau group de processus

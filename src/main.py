@@ -12,11 +12,25 @@ from src.logger import get_logger
 from src.notification_manager import NotificationManager
 from src.onboarding import OnboardingWizard
 from src.tray_icon import CodeGateTray
+from src.dashboard import DashboardWindow
+from src.ipc_server import IPCServer
 
 
 class SignalBridge(QObject):
     request_overlay = Signal()
 
+
+def check_first_run():
+    """Vérifier si c'est la première exécution de CodeGate"""
+    installed_flag = os.path.expanduser("~/.config/codegate/.installed")
+    return not os.path.exists(installed_flag)
+
+def mark_installed():
+    """Marquer CodeGate comme installé"""
+    installed_flag = os.path.expanduser("~/.config/codegate/.installed")
+    os.makedirs(os.path.dirname(installed_flag), exist_ok=True)
+    with open(installed_flag, 'w') as f:
+        f.write("installed")
 
 def main():
     app = QApplication(sys.argv)
@@ -53,6 +67,9 @@ def main():
 
     # Initialize notification manager with configured language
     notifier = NotificationManager(lang=config.get("language", "en"))
+    
+    # Détecter le first run (après onboarding)
+    is_first_run = check_first_run()
     
     # --- FIRST RUN: Onboarding Wizard ---
     if config.get("first_run", True):
@@ -94,10 +111,19 @@ def main():
     window = OverlayWindow(fetcher, initial_settings=config)
     logger.info("GUI initialized")
     
+    # Dashboard Setup
+    dashboard = DashboardWindow(window.i18n, config)
+    logger.info("Dashboard initialized")
+    
     # System Tray Setup
     tray = CodeGateTray(lang=config.get("language", "en"))
     tray.show()
     logger.info("System Tray initialized")
+    
+    # IPC Server Setup
+    ipc_server = IPCServer()
+    ipc_server.start()
+    logger.info("IPC Server initialized")
 
     # Wiring
     def on_block_detected():
@@ -138,25 +164,45 @@ def main():
             "total_solved": notifier.stats.get("challenges_solved", 0)
         })
     
+    def show_dashboard():
+        """Afficher le dashboard"""
+        logger.info("Dashboard requested")
+        dashboard.show()
+        dashboard.raise_()
+        dashboard.activateWindow()
+    
     def quit_app():
         """Quitter proprement l'application"""
         logger.info("Quit requested from tray")
         blocker.stop()
+        ipc_server.stop()
         app.quit()
 
     # Connect signals
     bridge.request_overlay.connect(window.showFullScreen)
     window.unblock_signal.connect(blocker.unblock_all)
     window.settings_changed.connect(on_settings_changed)
+    dashboard.settings_changed.connect(on_settings_changed)
     
     # Tray signals
-    tray.request_settings.connect(window.open_settings)
+    tray.request_settings.connect(show_dashboard)
     tray.request_quit.connect(quit_app)
+    
+    # IPC signals
+    ipc_server.show_dashboard_signal.connect(show_dashboard)
+    ipc_server.quit_signal.connect(quit_app)
     
     # Start Blocker
     blocker.on_block_callback = on_block_detected 
     blocker.start()
     logger.info("Process blocker started")
+    
+    # Gestion du First Run
+    if is_first_run:
+        logger.info("First run detected, showing dashboard with tutorial")
+        dashboard.show_with_tutorial()
+        dashboard.force_initial_setup()
+        mark_installed()
     
     # Notification de démarrage
     notifier.notify_startup()

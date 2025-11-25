@@ -249,6 +249,46 @@ else
 fi
 
 #-------------------------------------------------------------------------------
+# Step 11: Install CLI tool
+#-------------------------------------------------------------------------------
+print_info "Installing CLI tool..."
+
+# Create ~/.local/bin if it doesn't exist
+mkdir -p "$HOME/.local/bin"
+
+# Copy CLI script
+cp "$INSTALL_DIR/bin/codegate" "$HOME/.local/bin/codegate"
+chmod +x "$HOME/.local/bin/codegate"
+print_success "CLI tool installed to ~/.local/bin/codegate"
+
+# Check if ~/.local/bin is in PATH
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    print_warning "~/.local/bin is not in your PATH"
+    
+    # Detect shell
+    SHELL_RC=""
+    if [ -n "$BASH_VERSION" ]; then
+        SHELL_RC="$HOME/.bashrc"
+    elif [ -n "$ZSH_VERSION" ]; then
+        SHELL_RC="$HOME/.zshrc"
+    fi
+    
+    if [ -n "$SHELL_RC" ]; then
+        print_info "Adding ~/.local/bin to PATH in $SHELL_RC"
+        echo '' >> "$SHELL_RC"
+        echo '# Added by CodeGate installer' >> "$SHELL_RC"
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$SHELL_RC"
+        print_success "PATH updated in $SHELL_RC"
+        print_warning "Please run: source $SHELL_RC"
+        print_warning "Or restart your terminal to use 'codegate' command"
+    else
+        print_warning "Please manually add ~/.local/bin to your PATH"
+    fi
+else
+    print_success "~/.local/bin already in PATH"
+fi
+
+#-------------------------------------------------------------------------------
 # Installation complete
 #-------------------------------------------------------------------------------
 echo ""
@@ -261,7 +301,8 @@ echo ""
 echo "Next steps:"
 echo "  1. CodeGate will start automatically at next login"
 echo "  2. Or start it now: $INSTALL_DIR/run_codegate.sh"
-echo "  3. Configure blocked apps in the settings (⚙ icon)"
+echo "  3. Open dashboard: codegate open (or click system tray icon)"
+echo "  4. View status: codegate status"
 echo ""
 print_warning "NOTE: To uninstall, run: $INSTALL_DIR/uninstall.sh"
 echo ""
@@ -273,7 +314,9 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     print_info "Starting CodeGate..."
     "$INSTALL_DIR/run_codegate.sh" &
     sleep 2
-    print_success "CodeGate started! Check the system tray."
+    print_success "CodeGate started!"
+    print_info "The dashboard will open for first-time setup"
+    print_info "You can also control it with: codegate {open|status|quit}"
 fi
 
 exit 0

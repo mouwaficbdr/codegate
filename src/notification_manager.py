@@ -126,13 +126,29 @@ class NotificationManager:
         )
     
     def notify_startup(self):
-        """Notification au démarrage de CodeGate"""
-        self.send(
-            self.i18n.get("notif_startup_title"),
-            self.i18n.get("notif_startup_msg"),
-            urgency="low",
-            icon="security-high"
-        )
+        """Notification au démarrage de CodeGate (cliquable)"""
+        # Utiliser notify-send avec action pour ouvrir le dashboard
+        try:
+            # Version simple: notification cliquable avec action default
+            subprocess.run([
+                "notify-send",
+                f"--app-name={self.app_name}",
+                "--urgency=low",
+                "--icon=security-high",
+                "--action=default=Ouvrir le tableau de bord",
+                self.i18n.get("notif_startup_title"),
+                self.i18n.get("notif_startup_msg_clickable", 
+                    "CodeGate est actif. Cliquez ici pour ouvrir le tableau de bord.")
+            ], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except Exception:
+            # Fallback: notification simple sans action
+            self.send(
+                self.i18n.get("notif_startup_title"),
+                self.i18n.get("notif_startup_msg"),
+                urgency="low",
+                icon="security-high"
+            )
+
     
     def notify_stats(self):
         """Notification avec les statistiques"""
