@@ -310,7 +310,7 @@ Contributions are welcome!
 
 ## 📄 License
 
-MIT License — See the `LICENSE` file for details. (If I remembered to add it lol)
+MIT License — See the `LICENSE` file for details.
 
 ---
 
