@@ -314,4 +314,4 @@ MIT License — See the `LICENSE` file for details. (If I remembered to add it l
 
 ---
 
-**Made with ⚡ for focused devs (Lol)**
+**Made with ❤️ for focused devs**
